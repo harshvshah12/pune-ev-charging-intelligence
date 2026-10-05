@@ -1,0 +1,176 @@
+{
+  "timeline": [
+    {
+      "year": 2020,
+      "label": "2020 (Policy Inception)",
+      "new_registrations": 4820,
+      "cumulative_evs": 6250,
+      "e2w": 4120,
+      "e3w": 380,
+      "e4w": 290,
+      "buses_commercial": 30,
+      "charging_stations_operational": 18,
+      "ev_penetration_pct": 1.2,
+      "key_event": "National FAME-II rollout & early EV pilot incentives"
+    },
+    {
+      "year": 2021,
+      "label": "2021 (Maharashtra EV Policy)",
+      "new_registrations": 11430,
+      "cumulative_evs": 17680,
+      "e2w": 9650,
+      "e3w": 890,
+      "e4w": 820,
+      "buses_commercial": 70,
+      "charging_stations_operational": 48,
+      "ev_penetration_pct": 2.8,
+      "key_event": "Notification of Maharashtra Electric Vehicle Policy 2021"
+    },
+    {
+      "year": 2022,
+      "label": "2022 (Rapid Acceleration)",
+      "new_registrations": 25625,
+      "cumulative_evs": 43305,
+      "e2w": 21850,
+      "e3w": 1840,
+      "e4w": 1810,
+      "buses_commercial": 125,
+      "charging_stations_operational": 112,
+      "ev_penetration_pct": 5.9,
+      "key_event": "PMC & PMPML induction of 150+ electric city buses"
+    },
+    {
+      "year": 2023,
+      "label": "2023 (Mainstream Adoption)",
+      "new_registrations": 33411,
+      "cumulative_evs": 76716,
+      "e2w": 27950,
+      "e3w": 2420,
+      "e4w": 2860,
+      "buses_commercial": 181,
+      "charging_stations_operational": 185,
+      "ev_penetration_pct": 8.4,
+      "key_event": "Pune records ~90 EV registrations per day; Ola & Ather gig hubs"
+    },
+    {
+      "year": 2024,
+      "label": "2024 (Scale & Grid Strain)",
+      "new_registrations": 46850,
+      "cumulative_evs": 123566,
+      "e2w": 38100,
+      "e3w": 3650,
+      "e4w": 4850,
+      "buses_commercial": 250,
+      "charging_stations_operational": 240,
+      "ev_penetration_pct": 11.6,
+      "key_event": "Tata Power & BPCL expressway corridor charging expansion"
+    },
+    {
+      "year": 2025,
+      "label": "2025 (Festive Spike & Fast Charging Deficit)",
+      "new_registrations": 62400,
+      "cumulative_evs": 185966,
+      "e2w": 49800,
+      "e3w": 4900,
+      "e4w": 7350,
+      "buses_commercial": 350,
+      "charging_stations_operational": 298,
+      "ev_penetration_pct": 15.2,
+      "key_event": "BEE national registry reaches 1,354 recorded charging points in Pune"
+    },
+    {
+      "year": 2026,
+      "label": "2026 (Current Trajectory)",
+      "new_registrations": 78200,
+      "cumulative_evs": 264166,
+      "e2w": 61500,
+      "e3w": 6200,
+      "e4w": 10050,
+      "buses_commercial": 450,
+      "charging_stations_operational": 326,
+      "ev_penetration_pct": 18.7,
+      "key_event": "Transition from MH-12 to MH-61 series; critical demand for 10 new strategic DC hubs"
+    }
+  ],
+  "simulation_corridor": {
+    "title": "Hinjewadi to Shivajinagar Daily EV Commute Corridor",
+    "total_distance_km": 17.8,
+    "typical_duration_min": 38,
+    "energy_consumed_kwh": 3.4,
+    "status": "SIMULATION (Verified Road Geometry & Elevation)",
+    "waypoints": [
+      {
+        "name": "Hinjewadi Infotech Park Phase 1",
+        "lat": 18.5915,
+        "lon": 73.7385,
+        "speed_kmh": 35,
+        "soc_pct": 92,
+        "segment": "Hinjewadi Flyover Approach"
+      },
+      {
+        "name": "Wakad Bridge / Bhujbal Chowk",
+        "lat": 18.5992,
+        "lon": 73.7625,
+        "speed_kmh": 48,
+        "soc_pct": 89,
+        "segment": "NH-48 Bypass Flyover"
+      },
+      {
+        "name": "Balewadi Phata Arterial",
+        "lat": 18.5784,
+        "lon": 73.7745,
+        "speed_kmh": 42,
+        "soc_pct": 85,
+        "segment": "Baner-Balewadi Link Rd"
+      },
+      {
+        "name": "Baner High Street Intersection",
+        "lat": 18.5592,
+        "lon": 73.7845,
+        "speed_kmh": 30,
+        "soc_pct": 81,
+        "segment": "Baner Commercial Spine"
+      },
+      {
+        "name": "Pashan-Sus Road Connector",
+        "lat": 18.5485,
+        "lon": 73.7915,
+        "speed_kmh": 38,
+        "soc_pct": 77,
+        "segment": "DP Road North"
+      },
+      {
+        "name": "Aundh Parihar Chowk",
+        "lat": 18.5582,
+        "lon": 73.8075,
+        "speed_kmh": 25,
+        "soc_pct": 73,
+        "segment": "Aundh Main Market Rd"
+      },
+      {
+        "name": "Pune University Circle / SPPU Gate",
+        "lat": 18.5492,
+        "lon": 73.8295,
+        "speed_kmh": 40,
+        "soc_pct": 69,
+        "segment": "Ganeshkhind Road Arterial"
+      },
+      {
+        "name": "Agriculture College Flyover",
+        "lat": 18.5395,
+        "lon": 73.8445,
+        "speed_kmh": 45,
+        "soc_pct": 66,
+        "segment": "Shivajinagar Grade Separator"
+      },
+      {
+        "name": "Shivajinagar Intermodal Hub (Dest)",
+        "lat": 18.5328,
+        "lon": 73.8524,
+        "speed_kmh": 15,
+        "soc_pct": 63,
+        "segment": "Shivajinagar Metro Terminal"
+      }
+    ]
+  }
+}
