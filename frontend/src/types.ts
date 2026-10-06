@@ -112,6 +112,11 @@ export interface CorridorWaypoint {
   speed_kmh: number;
   soc_pct: number;
   segment: string;
+  is_charging_stop?: boolean;
+  charging_station_name?: string;
+  soc_before?: number;
+  charge_added_pct?: number;
+  charge_added_kwh?: number;
 }
 
 export interface SimulationCorridor {

@@ -787,6 +787,16 @@ export const MapEngine: React.FC<MapEngineProps> = ({
       }
       prevCarPosRef.current = simulatedCarPosition;
 
+      const isCharging = simulatedCarPosition.is_charging_stop;
+      const isLowSoc = simulatedCarPosition.soc_pct < 20 && !isCharging;
+      const beaconColor = isCharging ? '#fbbf24' : isLowSoc ? '#f43f5e' : '#00f59b';
+      const beaconShadow = isCharging ? '0 0 24px #fbbf24' : isLowSoc ? '0 0 22px #f43f5e' : '0 0 16px #00f59b';
+      const hudHtml = isCharging
+        ? `<span style="color: #fbbf24;">⚡ FAST CHARGING</span><span style="color: #64748b;">·</span><span style="color: #10b981;">${simulatedCarPosition.soc_pct}%</span>`
+        : isLowSoc
+        ? `<span style="color: #f43f5e;">⚠ LOW BATT (${simulatedCarPosition.speed_kmh}K)</span><span style="color: #64748b;">·</span><span style="color: #f43f5e;">${simulatedCarPosition.soc_pct}%</span>`
+        : `<span style="color: #00f59b;">${simulatedCarPosition.speed_kmh} KM/H</span><span style="color: #64748b;">·</span><span style="color: #38bdf8;">${simulatedCarPosition.soc_pct}%</span>`;
+
       if (!carMarkerRef.current) {
         const el = document.createElement('div');
         el.className = 'car-beacon-marker';
@@ -801,21 +811,19 @@ export const MapEngine: React.FC<MapEngineProps> = ({
             <div class="headlight-cone" style="position: absolute; top: -45px; left: 12px; width: 40px; height: 55px; background: linear-gradient(to top, rgba(0, 245, 155, 0.4), rgba(0, 229, 255, 0)); clip-path: polygon(30% 100%, 70% 100%, 100% 0%, 0% 0%); transform-origin: bottom center; transform: rotate(${bearing}deg); filter: blur(2px);"></div>
 
             <!-- Pulsating Radar Rings -->
-            <div style="position: absolute; width: 32px; height: 32px; border-radius: 50%; border: 2px solid #00f59b; animation: car-sonar 1.8s infinite linear; opacity: 0.6;"></div>
-            <div style="position: absolute; width: 46px; height: 46px; border-radius: 50%; border: 1px dashed rgba(0, 229, 255, 0.5); animation: car-sonar 2.4s infinite linear; opacity: 0.4;"></div>
+            <div class="beacon-ring-1" style="position: absolute; width: 32px; height: 32px; border-radius: 50%; border: 2px solid ${beaconColor}; animation: car-sonar 1.8s infinite linear; opacity: 0.6;"></div>
+            <div class="beacon-ring-2" style="position: absolute; width: 46px; height: 46px; border-radius: 50%; border: 1px dashed ${beaconColor}; animation: car-sonar 2.4s infinite linear; opacity: 0.4;"></div>
 
             <!-- Vehicle Arrow Pointer -->
-            <div style="position: relative; z-index: 10; width: 22px; height: 22px; background: #00f59b; border: 2px solid #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px #00f59b; transform: rotate(${bearing}deg);">
+            <div class="vehicle-pointer" style="position: relative; z-index: 10; width: 22px; height: 22px; background: ${beaconColor}; border: 2px solid #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: ${beaconShadow}; transform: rotate(${bearing}deg); transition: background 0.3s, box-shadow 0.3s;">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#040608" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="12 2 19 21 12 17 5 21 12 2" fill="#040608"></polygon>
               </svg>
             </div>
 
             <!-- Tactical Flight Telemetry HUD Chip -->
-            <div style="position: absolute; top: -38px; left: 50%; transform: translateX(-50%); background: rgba(8, 12, 20, 0.92); border: 1px solid rgba(0, 245, 155, 0.4); border-radius: 6px; padding: 2px 6px; font-family: monospace; font-size: 9px; font-weight: bold; white-space: nowrap; color: #ffffff; display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 14px rgba(0,0,0,0.8); z-index: 20;">
-              <span style="color: #00f59b;">${simulatedCarPosition.speed_kmh} KM/H</span>
-              <span style="color: #64748b;">·</span>
-              <span style="color: #38bdf8;">${simulatedCarPosition.soc_pct}%</span>
+            <div class="telemetry-hud" style="position: absolute; top: -38px; left: 50%; transform: translateX(-50%); background: rgba(8, 12, 20, 0.94); border: 1px solid ${beaconColor}88; border-radius: 6px; padding: 2px 7px; font-family: monospace; font-size: 9px; font-weight: bold; white-space: nowrap; color: #ffffff; display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 14px rgba(0,0,0,0.8); z-index: 20;">
+              ${hudHtml}
             </div>
           </div>
         `;
@@ -828,15 +836,16 @@ export const MapEngine: React.FC<MapEngineProps> = ({
         // Update headlight angle and telemetry tag
         const cone = carMarkerRef.current.getElement().querySelector('.headlight-cone') as HTMLElement;
         if (cone) cone.style.transform = `rotate(${bearing}deg)`;
-        const pointer = carMarkerRef.current.getElement().querySelector('.beacon-root > div:nth-child(4)') as HTMLElement;
-        if (pointer) pointer.style.transform = `rotate(${bearing}deg)`;
-        const hud = carMarkerRef.current.getElement().querySelector('.beacon-root > div:last-child') as HTMLElement;
+        const pointer = carMarkerRef.current.getElement().querySelector('.vehicle-pointer') as HTMLElement;
+        if (pointer) {
+          pointer.style.transform = `rotate(${bearing}deg)`;
+          pointer.style.background = beaconColor;
+          pointer.style.boxShadow = beaconShadow;
+        }
+        const hud = carMarkerRef.current.getElement().querySelector('.telemetry-hud') as HTMLElement;
         if (hud) {
-          hud.innerHTML = `
-            <span style="color: #00f59b;">${simulatedCarPosition.speed_kmh} KM/H</span>
-            <span style="color: #64748b;">·</span>
-            <span style="color: #38bdf8;">${simulatedCarPosition.soc_pct}%</span>
-          `;
+          hud.innerHTML = hudHtml;
+          hud.style.borderColor = `${beaconColor}88`;
         }
       }
     } else {

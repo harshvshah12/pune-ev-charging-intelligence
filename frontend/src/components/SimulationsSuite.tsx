@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TimeSeriesYear, CorridorWaypoint, SimulationCorridor, Recommendation } from '../types';
-import { Play, Pause, RotateCcw, Navigation, BatteryCharging, Flame, Award, Sliders, ArrowRight, Zap, CheckCircle2, Gauge, Radio, FastForward } from 'lucide-react';
+import { Play, Pause, RotateCcw, Navigation, BatteryCharging, Flame, Award, Sliders, ArrowRight, Zap, CheckCircle2, Gauge, Radio, FastForward, AlertTriangle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface SimulationsSuiteProps {
@@ -356,58 +356,147 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
           {/* Stepper Scrubber of Waypoints */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-[10px] font-mono-tech text-slate-400">
-              <span>TRACED WAYPOINT PROGRESSION:</span>
+              <span className="flex items-center gap-1.5">
+                <span>TRACED WAYPOINT PROGRESSION:</span>
+                <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30">
+                  ⚡ INCLUDES INTERMEDIATE REFUEL PITSTOP
+                </span>
+              </span>
               <span className="text-emerald-400 font-bold">
                 {currentWaypointIdx + 1} OF {corridor.waypoints.length} NODES
               </span>
             </div>
             <div className="flex flex-wrap gap-1.5">
-              {corridor.waypoints.map((wp, idx) => (
-                <button
-                  key={wp.name}
-                  onClick={() => handleJumpWaypoint(idx)}
-                  className={`flex-1 min-w-[70px] p-1.5 rounded-lg border text-center transition-all cursor-pointer ${
-                    idx === currentWaypointIdx
-                      ? 'bg-emerald-500 text-black border-emerald-400 font-bold shadow-md shadow-emerald-500/30'
-                      : idx < currentWaypointIdx
-                      ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30'
-                      : 'bg-white/[0.03] text-slate-400 border-white/5 hover:bg-white/[0.08]'
-                  }`}
-                  title={`${wp.name} (${wp.speed_kmh} km/h, ${wp.soc_pct}% SoC)`}
-                >
-                  <div className="text-[10px] font-mono-tech">#{idx + 1}</div>
-                  <div className="text-[9px] font-mono-tech truncate mt-0.5 opacity-80">{wp.name.split(' ')[0]}</div>
-                </button>
-              ))}
+              {corridor.waypoints.map((wp, idx) => {
+                const isSelected = idx === currentWaypointIdx;
+                const isPast = idx < currentWaypointIdx;
+                const isChargingStop = wp.is_charging_stop;
+                const isLowSoc = wp.soc_pct < 20;
+                return (
+                  <button
+                    key={wp.name}
+                    onClick={() => handleJumpWaypoint(idx)}
+                    className={`flex-1 min-w-[75px] p-1.5 rounded-lg border text-center transition-all cursor-pointer relative overflow-hidden ${
+                      isSelected
+                        ? isChargingStop
+                          ? 'bg-amber-400 text-black border-amber-300 font-bold shadow-lg shadow-amber-400/40 ring-2 ring-amber-400/50'
+                          : 'bg-emerald-500 text-black border-emerald-400 font-bold shadow-md shadow-emerald-500/30'
+                        : isChargingStop
+                        ? 'bg-amber-500/15 text-amber-300 border-amber-500/50 hover:bg-amber-500/25'
+                        : isLowSoc
+                        ? 'bg-rose-950/40 text-rose-300 border-rose-500/40 hover:bg-rose-950/60'
+                        : isPast
+                        ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30'
+                        : 'bg-white/[0.03] text-slate-400 border-white/5 hover:bg-white/[0.08]'
+                    }`}
+                    title={`${wp.name} (${wp.speed_kmh} km/h, ${wp.soc_pct}% SoC)`}
+                  >
+                    <div className="flex items-center justify-center gap-1 text-[10px] font-mono-tech">
+                      {isChargingStop && <Zap className="w-2.5 h-2.5 fill-current" />}
+                      <span>{isChargingStop ? '⚡ PITSTOP' : `#${idx + 1}`}</span>
+                    </div>
+                    <div className="text-[9px] font-mono-tech truncate mt-0.5 opacity-90">
+                      {wp.soc_pct}% SoC
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
+
+          {/* Active Fast-Charge Pitstop Banner if docked */}
+          {currentWaypoint?.is_charging_stop && (
+            <div className="bg-gradient-to-r from-amber-500/20 via-emerald-500/15 to-amber-500/20 border border-amber-400/60 p-3 rounded-xl font-mono-tech text-xs flex flex-wrap items-center justify-between gap-2 shadow-xl shadow-amber-500/15 animate-pulse">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-amber-400 text-black flex items-center justify-center font-bold shadow-md shadow-amber-400/40">
+                  <Zap className="w-4.5 h-4.5 fill-black" />
+                </div>
+                <div>
+                  <div className="text-amber-300 font-bold uppercase tracking-wider text-[11px] flex items-center gap-2">
+                    <span>⚡ FAST CHARGING IN PROGRESS (DOCKED)</span>
+                    <span className="text-[9px] bg-amber-400/20 text-amber-200 px-2 py-0.5 rounded border border-amber-400/30">
+                      60KW DUAL CCS-2 DC FAST CHARGER
+                    </span>
+                  </div>
+                  <div className="text-white text-[11px] mt-0.5 font-bold">
+                    {currentWaypoint.charging_station_name || 'Dual 60kW DC Fast PCS'}
+                  </div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-[10px] text-slate-300 uppercase tracking-wider">Energy Surge Injected</div>
+                <div className="text-emerald-400 font-bold text-sm">
+                  {currentWaypoint.soc_before || 10}% ➔ {currentWaypoint.soc_pct}% SoC <span className="text-amber-300 text-xs">(+{currentWaypoint.charge_added_pct || 78}%)</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Critical Low Battery Warning Banner if below 20% and not yet charging */}
+          {currentWaypoint && currentWaypoint.soc_pct < 20 && !currentWaypoint.is_charging_stop && (
+            <div className="bg-rose-950/40 border border-rose-500/50 p-2.5 rounded-xl font-mono-tech text-xs flex items-center justify-between gap-2 text-rose-300 shadow-lg shadow-rose-950/40">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
+                <span className="font-bold text-[11px]">⚠ CRITICAL LOW FUEL / BATTERY ALERT ({currentWaypoint.soc_pct}% SoC)</span>
+                <span className="text-slate-400 text-[10px]">· Approaching intermediate fast charging pitstop along corridor</span>
+              </div>
+              <span className="text-[10px] bg-rose-500/25 text-rose-200 px-2 py-0.5 rounded border border-rose-500/40 font-bold uppercase">
+                EST. RANGE &lt; 15 KM
+              </span>
+            </div>
+          )}
 
           {/* Current Vehicle Telemetry Cockpit HUD */}
           {currentWaypoint && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 bg-[#080d16] p-3 rounded-xl border border-white/[0.08] font-mono-tech text-xs shadow-inner">
               <div>
                 <div className="text-[10px] text-slate-400 uppercase tracking-wider">Active Waypoint</div>
-                <div className="text-white font-bold truncate mt-0.5">{currentWaypoint.name}</div>
+                <div className="text-white font-bold truncate mt-0.5 flex items-center gap-1.5">
+                  {currentWaypoint.is_charging_stop && <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                  <span className="truncate">{currentWaypoint.name}</span>
+                </div>
               </div>
               <div>
                 <div className="text-[10px] text-slate-400 uppercase tracking-wider">Ground Speed</div>
                 <div className="text-cyan-400 font-bold mt-0.5 flex items-center gap-1.5">
                   <Gauge className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>{currentWaypoint.speed_kmh} km/h</span>
+                  {currentWaypoint.is_charging_stop ? (
+                    <span className="text-amber-300 font-bold">0 km/h (DOCKED)</span>
+                  ) : (
+                    <span>{currentWaypoint.speed_kmh} km/h</span>
+                  )}
                 </div>
               </div>
               <div>
                 <div className="text-[10px] text-slate-400 uppercase tracking-wider">Battery State (SoC)</div>
-                <div className="text-emerald-400 font-bold flex items-center gap-1.5 mt-0.5">
-                  <BatteryCharging className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>{currentWaypoint.soc_pct}%</span>
+                <div className="font-bold flex items-center gap-1.5 mt-0.5">
+                  <BatteryCharging className={`w-3.5 h-3.5 ${
+                    currentWaypoint.is_charging_stop
+                      ? 'text-amber-400 animate-pulse'
+                      : currentWaypoint.soc_pct < 20
+                      ? 'text-rose-400'
+                      : 'text-emerald-400'
+                  }`} />
+                  <span className={
+                    currentWaypoint.is_charging_stop
+                      ? 'text-amber-300'
+                      : currentWaypoint.soc_pct < 20
+                      ? 'text-rose-400'
+                      : 'text-emerald-400'
+                  }>
+                    {currentWaypoint.soc_pct}%
+                    {currentWaypoint.is_charging_stop && ' (RECHARGED)'}
+                    {currentWaypoint.soc_pct < 20 && !currentWaypoint.is_charging_stop && ' (CRITICAL)'}
+                  </span>
                   <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden ml-1">
                     <div
                       style={{ width: `${currentWaypoint.soc_pct}%` }}
                       className={`h-full transition-all duration-300 ${
-                        currentWaypoint.soc_pct > 70
+                        currentWaypoint.is_charging_stop
+                          ? 'bg-gradient-to-r from-amber-400 to-emerald-400'
+                          : currentWaypoint.soc_pct > 70
                           ? 'bg-emerald-400'
-                          : currentWaypoint.soc_pct > 40
+                          : currentWaypoint.soc_pct > 30
                           ? 'bg-amber-400'
                           : 'bg-rose-500'
                       }`}
