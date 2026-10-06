@@ -6,6 +6,7 @@ import { LayerControlsPanel } from './components/LayerControlsPanel';
 import { OptimizerControlsPanel } from './components/OptimizerControlsPanel';
 import { RecommendationsList } from './components/RecommendationsList';
 import { SimulationsSuite } from './components/SimulationsSuite';
+import { SitingRationalePanel } from './components/SitingRationalePanel';
 import { StationDetailDrawer } from './components/StationDetailDrawer';
 import { MethodologyModal } from './components/MethodologyModal';
 import { ProvenanceModal } from './components/ProvenanceModal';
@@ -411,6 +412,17 @@ export function App() {
               onSetSimulatedCarPosition={setSimulatedCarPosition}
               activeAnimation={null}
               setActiveAnimation={() => {}}
+            />
+          </div>
+        )}
+
+        {/* Bottom Full-Width Sited Nodes Selection Rationale Panel */}
+        {recommendations.length > 0 && (
+          <div className="w-full">
+            <SitingRationalePanel
+              selectedRecommendation={selectedRecommendation}
+              recommendations={recommendations}
+              targetCount={targetStations}
             />
           </div>
         )}

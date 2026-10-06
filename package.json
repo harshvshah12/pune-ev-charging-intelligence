@@ -1,0 +1,22 @@
+{
+  "name": "pune-ev-charging-intelligence",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VoltPune: High-fidelity 3D geospatial intelligence platform & greedy submodular optimization engine answering where Pune should build its next EV charging stations.",
+  "scripts": {
+    "build": "npm --prefix frontend run build",
+    "dev": "npm --prefix frontend run dev",
+    "preview": "npm --prefix frontend run preview"
+  },
+  "keywords": [
+    "ev",
+    "charging-stations",
+    "pune",
+    "geospatial",
+    "maplibre",
+    "threejs",
+    "data-visualization"
+  ],
+  "author": "Harsh Shah",
+  "license": "MIT"
+}

@@ -1,11 +1,16 @@
 import { Station, WardCollection, Candidate, Recommendation, FunnelStep, TimeSeriesYear, SimulationCorridor, OverviewMetrics } from '../types';
 
-const API_BASE = '/api';
+const API_BASE = (import.meta as any).env?.VITE_API_BASE || '/api';
+
+const isJsonResponse = (res: Response) => {
+  const ct = res.headers.get('content-type');
+  return res.ok && ct !== null && ct.includes('application/json');
+};
 
 export async function fetchOverview(): Promise<{ metrics: OverviewMetrics; live_status_notice: any }> {
   try {
     const res = await fetch(`${API_BASE}/overview`);
-    if (res.ok) return await res.json();
+    if (isJsonResponse(res)) return await res.json();
   } catch (e) {
     console.warn('Backend API unavailable, using bundled data:', e);
   }
@@ -45,7 +50,7 @@ export async function fetchOverview(): Promise<{ metrics: OverviewMetrics; live_
 export async function fetchStations(): Promise<Station[]> {
   try {
     const res = await fetch(`${API_BASE}/stations?type=all`);
-    if (res.ok) {
+    if (isJsonResponse(res)) {
       const data = await res.json();
       return data.stations;
     }
@@ -59,7 +64,7 @@ export async function fetchStations(): Promise<Station[]> {
 export async function fetchWards(): Promise<WardCollection> {
   try {
     const res = await fetch(`${API_BASE}/wards`);
-    if (res.ok) return await res.json();
+    if (isJsonResponse(res)) return await res.json();
   } catch (e) {
     // fallback
   }
@@ -98,7 +103,7 @@ export async function fetchWards(): Promise<WardCollection> {
 export async function fetchRoads(): Promise<any> {
   try {
     const res = await fetch(`${API_BASE}/roads`);
-    if (res.ok) return await res.json();
+    if (isJsonResponse(res)) return await res.json();
   } catch (e) {
     // fallback
   }
@@ -128,7 +133,7 @@ export async function fetchTimeSeries(): Promise<{
 }> {
   try {
     const res = await fetch(`${API_BASE}/time-series`);
-    if (res.ok) return await res.json();
+    if (isJsonResponse(res)) return await res.json();
   } catch (e) {
     // fallback
   }
@@ -151,7 +156,7 @@ export async function executeOptimization(params: {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
     });
-    if (res.ok) return await res.json();
+    if (isJsonResponse(res)) return await res.json();
   } catch (e) {
     console.warn('Backend API unavailable for dynamic POST, computing client-side:', e);
   }

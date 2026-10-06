@@ -154,6 +154,19 @@ All 9 unit and integration tests verify coordinate validity, data deduplication,
 
 ---
 
+## 🚀 Instant Vercel Deployment
+
+VoltPune is configured for zero-configuration, 1-click deployment on [Vercel](https://vercel.com):
+
+1. **Import Repository**: Connect `harshvshah12/pune-ev-charging-intelligence` to Vercel.
+2. **Zero Configuration Needed**: The root `vercel.json` and `package.json` automatically orchestrate the build:
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm --prefix frontend run build` (or `npm run build` if Root Directory is set to `frontend`)
+   - **Output Directory**: `frontend/dist` (or `dist`)
+3. **Static Edge Architecture**: All 1,354 BEE stations, ward geometries, OSM arterials, optimization solutions, and 8 EV corridors are bundled in high-performance static JSON/GeoJSON files under `public/data/` with resilient client-side submodular solver fallbacks.
+
+---
+
 ## 📖 Academic References & Provenance
 
 1. **Bureau of Energy Efficiency (BEE)**, Ministry of Power, Govt. of India, *EV Public Charging Stations Register*, Oct 2025.

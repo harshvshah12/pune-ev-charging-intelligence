@@ -101,6 +101,33 @@ export const RecommendationsList: React.FC<RecommendationsListProps> = ({
           );
         })}
       </div>
+
+      {/* Bottom 3-Line Selection Explanation */}
+      <div className="pt-2 border-t border-white/[0.08] space-y-1.5 font-mono-tech text-[10px]">
+        <div className="flex items-center justify-between text-slate-300 font-bold uppercase tracking-wider">
+          <span className="flex items-center gap-1.5 text-emerald-400">
+            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+            <span>Why These Nodes Were Selected:</span>
+          </span>
+          <span className="text-[9px] text-emerald-300 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/30">
+            3-CRITERIA PROOF
+          </span>
+        </div>
+        <div className="space-y-1 text-slate-400 leading-snug bg-[#080d16] p-2.5 rounded-xl border border-white/[0.06]">
+          <p className="flex items-start gap-1.5">
+            <span className="text-emerald-400 font-bold shrink-0">1.</span>
+            <span><strong className="text-slate-200">Charging Deserts:</strong> Sited in high-deficit wards (e.g. Hadapsar & Nagar Road, &gt;380 EVs/charger, &gt;1.4km to nearest charger).</span>
+          </p>
+          <p className="flex items-start gap-1.5">
+            <span className="text-cyan-400 font-bold shrink-0">2.</span>
+            <span><strong className="text-slate-200">Arterial Access:</strong> Anchored to major OSM highway interchanges and BRTS terminals with verified 11kV grid capacity.</span>
+          </p>
+          <p className="flex items-start gap-1.5">
+            <span className="text-purple-400 font-bold shrink-0">3.</span>
+            <span><strong className="text-slate-200">Submodular Gain:</strong> Maximizes marginal coverage (+6.5% citywide) while maintaining a strict 1.15km anti-cannibalization buffer.</span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
