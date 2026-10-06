@@ -55,13 +55,8 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
       timer = setInterval(() => {
         setCurrentWaypointIdx((prev) => {
           if (prev < corridor.waypoints.length - 1) {
-            const next = prev + 1;
-            const wp = corridor.waypoints[next];
-            onSetSimulatedCarPosition(wp);
-            onFlyToCoords([wp.lon, wp.lat]);
-            return next;
+            return prev + 1;
           } else {
-            setIsPlayingJourney(false);
             return prev;
           }
         });
@@ -69,6 +64,18 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
     }
     return () => clearInterval(timer);
   }, [isPlayingJourney, corridor?.waypoints]);
+
+  // Synchronize waypoint to parent safely inside an effect
+  useEffect(() => {
+    if (isPlayingJourney && corridor?.waypoints && corridor.waypoints[currentWaypointIdx]) {
+      const wp = corridor.waypoints[currentWaypointIdx];
+      onSetSimulatedCarPosition(wp);
+      onFlyToCoords([wp.lon, wp.lat]);
+      if (currentWaypointIdx >= corridor.waypoints.length - 1) {
+        setIsPlayingJourney(false);
+      }
+    }
+  }, [currentWaypointIdx, isPlayingJourney, corridor?.waypoints]);
 
   const currentWaypoint = corridor?.waypoints?.[currentWaypointIdx] || corridor?.waypoints?.[0];
 
