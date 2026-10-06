@@ -1,6 +1,6 @@
 import React from 'react';
 import { Recommendation } from '../types';
-import { Award, Navigation, Zap, MapPin, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Award, Navigation, Zap, MapPin, CheckCircle2, ChevronRight, Compass } from 'lucide-react';
 
 interface RecommendationsListProps {
   recommendations: Recommendation[];
@@ -19,98 +19,83 @@ export const RecommendationsList: React.FC<RecommendationsListProps> = ({
 
   if (displayed.length === 0) {
     return (
-      <div className="glass-panel p-6 rounded-xl border border-white/10 text-center text-xs text-slate-400 space-y-2">
+      <div className="glass-panel p-6 rounded-2xl border border-white/[0.08] text-center text-xs text-slate-400 space-y-2.5">
         <Award className="w-8 h-8 text-slate-600 mx-auto" />
-        <p className="font-medium text-slate-300">0 Stations Selected</p>
-        <p className="text-[11px]">Use the optimizer slider to site between 1 and 20 optimal charging stations.</p>
+        <p className="font-bold font-mono-tech text-white uppercase tracking-wider">0 Stations Sited</p>
+        <p className="text-[11px] text-slate-400">
+          Adjust the quota slider above to generate up to 20 optimal spatial charging candidate locations.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="glass-panel p-4 rounded-xl border border-white/10 space-y-3">
+    <div className="glass-panel p-4.5 rounded-2xl border border-white/[0.08] space-y-3 shadow-xl">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-2">
-        <div className="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-wider">
-          <Award className="w-4 h-4 text-yellow-400" />
-          <span>Optimal Station Locations ({displayed.length})</span>
+      <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
+        <div className="flex items-center gap-2.5 text-xs font-bold text-white uppercase tracking-wider font-mono-tech">
+          <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+            <Award className="w-3.5 h-3.5" />
+          </div>
+          <span>Sited High-Impact Hubs ({displayed.length})</span>
         </div>
-        <span className="text-[10px] font-mono-tech text-emerald-400 font-semibold">
-          Marginal Greedy Sited
+        <span className="text-[10px] font-mono-tech px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold uppercase">
+          GREEDY SUBMODULAR
         </span>
       </div>
 
       {/* Cards list */}
-      <div className="space-y-2.5 max-h-[440px] overflow-y-auto pr-1">
+      <div className="space-y-2.5 max-h-[460px] overflow-y-auto pr-1">
         {displayed.map((rec) => {
           const isSelected = selectedRecommendation?.id === rec.id;
           return (
             <div
               key={rec.id}
               onClick={() => onSelectRecommendation(rec)}
-              className={`p-3 rounded-lg border transition-all cursor-pointer ${
+              className={`p-3.5 rounded-xl border transition-all cursor-pointer font-mono-tech text-xs ${
                 isSelected
-                  ? 'bg-yellow-500/10 border-yellow-500/60 shadow-lg shadow-yellow-500/10'
-                  : 'bg-white/5 border-white/5 hover:border-white/20 hover:bg-white/10'
+                  ? 'bg-emerald-950/40 border-emerald-500/60 shadow-lg shadow-emerald-500/10'
+                  : 'bg-white/[0.03] border-white/5 hover:border-emerald-500/30 hover:bg-white/[0.06]'
               }`}
             >
               {/* Top row */}
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-md bg-yellow-400/20 text-yellow-300 font-mono-tech font-bold text-xs flex items-center justify-center border border-yellow-400/30">
+                  <span className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-xs flex items-center justify-center border border-emerald-500/40">
                     #{rec.rank}
                   </span>
                   <div>
-                    <h4 className="text-xs font-bold text-white leading-snug">{rec.name}</h4>
-                    <p className="text-[11px] text-slate-400 flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-cyan-400" />
-                      <span>{rec.ward}</span>
-                    </p>
+                    <h4 className="font-bold text-white text-xs tracking-tight line-clamp-1">
+                      {rec.name}
+                    </h4>
+                    <span className="text-[10px] text-slate-400 line-clamp-1">{rec.ward}</span>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <div className="text-xs font-bold font-mono-tech text-yellow-400">
-                    {rec.optimization_score}
-                  </div>
-                  <div className="text-[9px] text-slate-400 uppercase">Score</div>
+                  <span className="text-emerald-400 font-bold text-xs">
+                    +{rec.incremental_coverage_gain_pct}%
+                  </span>
+                  <div className="text-[9px] text-slate-500">Net Gain</div>
                 </div>
               </div>
 
-              {/* Highway / Traffic Node */}
-              <div className="mt-2 text-[11px] text-slate-300 flex items-center justify-between">
-                <span className="text-slate-400">Arterial Node:</span>
-                <span className="font-mono-tech text-slate-200 truncate max-w-[190px]">{rec.traffic_node}</span>
+              {/* Middle row: Traffic Node */}
+              <div className="flex items-center gap-1.5 text-[10px] text-cyan-300/90 mt-2 bg-cyan-950/20 px-2 py-1 rounded-md border border-cyan-500/20">
+                <Navigation className="w-3 h-3 text-cyan-400 shrink-0" />
+                <span className="truncate">{rec.traffic_node}</span>
               </div>
 
-              {/* Distance to Nearest Existing */}
-              <div className="mt-1 text-[11px] text-slate-300 flex items-center justify-between">
-                <span className="text-slate-400">Nearest Fast Charger:</span>
-                <span className="font-mono-tech text-amber-400">{rec.nearest_existing_station_km} km away</span>
-              </div>
-
-              {/* Justification summary */}
-              <p className="mt-2 text-[11px] text-slate-300 italic bg-black/30 p-1.5 rounded border border-white/5">
-                "{rec.justification}"
-              </p>
-
-              {/* Footer specs & Fly-to button */}
-              <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between text-[10px]">
-                <span className="text-emerald-400 font-mono-tech flex items-center gap-1">
-                  <Zap className="w-3 h-3" />
-                  <span>Dual 60kW DC Fast</span>
-                </span>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSelectRecommendation(rec);
-                  }}
-                  className="text-cyan-400 hover:text-cyan-300 flex items-center gap-0.5 font-medium cursor-pointer"
-                >
-                  <span>Fly to Site</span>
-                  <ChevronRight className="w-3 h-3" />
-                </button>
+              {/* Hardware & Distance */}
+              <div className="flex items-center justify-between text-[10px] text-slate-400 mt-2 pt-2 border-t border-white/5">
+                <div className="flex items-center gap-1 text-slate-300">
+                  <Zap className="w-3 h-3 text-amber-400" />
+                  <span>Dual 60kW CCS-2 DC</span>
+                </div>
+                <div className="flex items-center gap-1 text-slate-400">
+                  <MapPin className="w-3 h-3 text-slate-500" />
+                  <span>{rec.nearest_existing_station_km} km to nearest</span>
+                </div>
               </div>
             </div>
           );

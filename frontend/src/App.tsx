@@ -31,11 +31,12 @@ import {
   CorridorWaypoint
 } from './types';
 import confetti from 'canvas-confetti';
-import { CheckCircle2, Award, Zap, Compass, RefreshCw } from 'lucide-react';
+import { CheckCircle2, Award, Zap, Compass, RefreshCw, Sliders, Layers, ChevronDown } from 'lucide-react';
 
 export function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [showLanding, setShowLanding] = useState<boolean>(true);
+  const [leftTab, setLeftTab] = useState<'solver' | 'layers'>('solver');
 
   // Core Data
   const [metrics, setMetrics] = useState<OverviewMetrics>({
@@ -73,7 +74,7 @@ export function App() {
     candidateLocations: false,
     recommendedSites: true,
     coverageIsochrones: true,
-    simulationRoute: false,
+    simulationRoute: true,
     building3D: true
   });
 
@@ -181,12 +182,12 @@ export function App() {
         setIsOptimizing(false);
         setOptimizationCompleteBanner(true);
         confetti({
-          particleCount: 80,
-          spread: 70,
+          particleCount: 90,
+          spread: 75,
           origin: { y: 0.6 }
         });
       }
-    }, 700);
+    }, 650);
   };
 
   // Re-run Dynamic Optimization with user weights
@@ -219,11 +220,11 @@ export function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#070a11] flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center animate-spin">
+      <div className="min-h-screen bg-[#040608] flex flex-col items-center justify-center space-y-4">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-400 to-cyan-500 flex items-center justify-center animate-spin shadow-xl shadow-emerald-500/20">
           <Zap className="w-6 h-6 text-black fill-black" />
         </div>
-        <div className="font-mono-tech text-xs tracking-wider text-slate-300">
+        <div className="font-mono-tech text-xs tracking-widest text-slate-300">
           INITIALIZING VOLTPUNE 3D SPATIAL KERNEL...
         </div>
       </div>
@@ -231,103 +232,125 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#070a11] text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-black">
-      {/* Global Header */}
+    <div className="min-h-screen bg-[#040608] text-slate-100 flex flex-col selection:bg-emerald-400 selection:text-black">
+      {/* Global Command Bar */}
       <Header
         onOpenMethodology={() => setShowMethodologyModal(true)}
         onOpenProvenance={() => setShowProvenanceModal(true)}
         onTriggerFlagshipBuild={handleTriggerFlagshipBuild}
         isOptimizing={isOptimizing}
+        activeTargetCount={targetStations}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-4 lg:p-6 space-y-5 max-w-[1720px] mx-auto w-full">
-        {/* Landing Hero View (Can be collapsed/entered) */}
+      {/* Main Command Center Deck */}
+      <main className="flex-1 p-4 lg:p-6 space-y-5 max-w-[1780px] mx-auto w-full">
+        {/* Landing Hero View */}
         {showLanding ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <LandingHero
               onEnterDashboard={() => setShowLanding(false)}
               onQuickBuild10={() => {
                 setShowLanding(false);
-                setTimeout(handleTriggerFlagshipBuild, 400);
+                setTimeout(handleTriggerFlagshipBuild, 350);
               }}
             />
             <div className="text-center">
               <button
                 onClick={() => setShowLanding(false)}
-                className="text-xs text-slate-400 hover:text-white font-mono-tech flex items-center justify-center gap-1 mx-auto cursor-pointer"
+                className="text-xs text-slate-400 hover:text-white font-mono-tech flex items-center justify-center gap-1.5 mx-auto cursor-pointer transition-colors"
               >
-                <span>Jump directly to Geospatial Workspace ↓</span>
+                <span>ENTER 3D GEOSPATIAL COMMAND WORKSPACE</span>
+                <ChevronDown className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
         ) : null}
 
-        {/* City Overview KPIs */}
+        {/* Global KPI Telemetry Strip */}
         <OverviewMetricsPanel metrics={metrics} selectedStationCount={targetStations} />
 
-        {/* Flagship Climax Banner */}
+        {/* Solver Convergence Climax Banner */}
         {optimizationCompleteBanner && (
-          <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-cyan-950/80 border border-emerald-500/40 flex flex-wrap items-center justify-between gap-4 shadow-xl">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-emerald-500 text-black flex items-center justify-center shadow-lg shadow-emerald-500/30">
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/80 via-[#0a121c] to-cyan-950/80 border border-emerald-500/40 flex flex-wrap items-center justify-between gap-4 shadow-2xl">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500 text-black flex items-center justify-center shadow-lg shadow-emerald-500/30">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <span>NETWORK OPTIMIZED: {targetStations} NEW STATIONS SITED</span>
-                  <span className="text-[10px] font-mono-tech px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                    CONVERGENCE ACHIEVED
+                <h3 className="text-sm font-bold text-white flex items-center gap-2 font-mono-tech">
+                  <span>NETWORK OPTIMIZED: {targetStations} HIGH-IMPACT HUBS SITED</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 tracking-wider">
+                    SUBMODULAR CONVERGENCE ACHIEVED
                   </span>
                 </h3>
-                <p className="text-xs text-slate-300">
-                  Submodular greedy selection increased citywide charging accessibility from <strong>83.5%</strong> to <strong>{targetStations >= 10 ? metrics.after_10_coverage_pct : (83.5 + targetStations * 0.65).toFixed(1)}%</strong> (+{metrics.coverage_improvement_10_stations_pct}% net gain).
+                <p className="text-xs text-slate-300 font-sans mt-0.5">
+                  Greedy submodular optimization increased 1.75km citywide fast-charging coverage from <strong>83.5%</strong> to <strong>{targetStations >= 10 ? metrics.after_10_coverage_pct : (83.5 + targetStations * 0.65).toFixed(1)}%</strong> (+{metrics.coverage_improvement_10_stations_pct}% net urban gain).
                 </p>
               </div>
             </div>
 
             <button
               onClick={() => setOptimizationCompleteBanner(false)}
-              className="text-xs text-slate-400 hover:text-white font-mono-tech px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 cursor-pointer"
+              className="text-xs text-slate-400 hover:text-white font-mono-tech px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 cursor-pointer transition-colors"
             >
-              Dismiss
+              DISMISS
             </button>
           </div>
         )}
 
-        {/* Geospatial Digital Twin Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          {/* Left Column: Layer Controls & Optimizer Controls (4 cols on lg) */}
-          <div className="lg:col-span-4 space-y-4">
-            <LayerControlsPanel
-              layerState={layerState}
-              onChangeLayerState={setLayerState}
-              cpoList={cpoList}
-            />
+        {/* 3-COLUMN INTEGRATED COMMAND WORKSPACE */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
+          {/* Left Column: Siting Controls & Layers (3 cols on xl) */}
+          <div className="xl:col-span-3 space-y-4">
+            {/* Tab switch between Solver and Layers */}
+            <div className="glass-panel p-1 rounded-xl border border-white/[0.08] grid grid-cols-2 gap-1 text-xs font-mono-tech shadow-md">
+              <button
+                onClick={() => setLeftTab('solver')}
+                className={`py-2 px-3 rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                  leftTab === 'solver'
+                    ? 'bg-emerald-500 text-black font-bold shadow-md shadow-emerald-500/20'
+                    : 'text-slate-300 hover:bg-white/5'
+                }`}
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                <span>SOLVER CONTROLS</span>
+              </button>
+              <button
+                onClick={() => setLeftTab('layers')}
+                className={`py-2 px-3 rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                  leftTab === 'layers'
+                    ? 'bg-cyan-500 text-black font-bold shadow-md shadow-cyan-500/20'
+                    : 'text-slate-300 hover:bg-white/5'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>SPATIAL LAYERS</span>
+              </button>
+            </div>
 
-            <OptimizerControlsPanel
-              targetStations={targetStations}
-              onTargetStationsChange={setTargetStations}
-              weights={weights}
-              onWeightsChange={setWeights}
-              minSeparationKm={minSeparationKm}
-              onMinSeparationChange={setMinSeparationKm}
-              onRunOptimization={handleRunOptimization}
-              isOptimizing={isOptimizing}
-            />
-
-            <RecommendationsList
-              recommendations={recommendations}
-              selectedRecommendation={selectedRecommendation}
-              onSelectRecommendation={handleSelectRecommendation}
-              targetCount={targetStations}
-            />
+            {leftTab === 'solver' ? (
+              <OptimizerControlsPanel
+                targetStations={targetStations}
+                onTargetStationsChange={setTargetStations}
+                weights={weights}
+                onWeightsChange={setWeights}
+                minSeparationKm={minSeparationKm}
+                onMinSeparationChange={setMinSeparationKm}
+                onRunOptimization={handleRunOptimization}
+                isOptimizing={isOptimizing}
+              />
+            ) : (
+              <LayerControlsPanel
+                layerState={layerState}
+                onChangeLayerState={setLayerState}
+                cpoList={cpoList}
+              />
+            )}
           </div>
 
-          {/* Right Column: 3D MapEngine & Simulation Suite (8 cols on lg) */}
-          <div className="lg:col-span-8 space-y-4">
-            {/* The 3D Map Canvas */}
-            <div className="h-[620px] w-full relative">
+          {/* Center Column: 3D Urban Geospatial Canvas (6 cols on xl) */}
+          <div className="xl:col-span-6 space-y-4">
+            <div className="h-[680px] w-full relative">
               <MapEngine
                 stations={stations}
                 wards={wards}
@@ -338,28 +361,42 @@ export function App() {
                 selectedStation={selectedStation}
                 selectedRecommendation={selectedRecommendation}
                 simulatedCarPosition={simulatedCarPosition}
+                corridor={corridor}
                 onSelectStation={handleSelectStation}
                 onSelectRecommendation={handleSelectRecommendation}
                 flyToCoords={flyToCoords}
+                is3DExtrusion={layerState.building3D}
               />
             </div>
+          </div>
 
-            {/* Simulation Suite */}
-            {timeline.length > 0 && corridor && (
-              <SimulationsSuite
-                timeline={timeline}
-                corridor={corridor}
-                recommendations={recommendations}
-                onTriggerOptimizationSequence={handleTriggerFlagshipBuild}
-                onSetLayerState={setLayerState}
-                onFlyToCoords={handleFlyTo}
-                onSetSimulatedCarPosition={setSimulatedCarPosition}
-                activeAnimation={null}
-                setActiveAnimation={() => {}}
-              />
-            )}
+          {/* Right Column: Sited Candidate Intelligence Dock (3 cols on xl) */}
+          <div className="xl:col-span-3 space-y-4">
+            <RecommendationsList
+              recommendations={recommendations}
+              selectedRecommendation={selectedRecommendation}
+              onSelectRecommendation={handleSelectRecommendation}
+              targetCount={targetStations}
+            />
           </div>
         </div>
+
+        {/* Bottom Full-Width Kinetic Simulation Suite */}
+        {timeline.length > 0 && corridor && (
+          <div className="w-full">
+            <SimulationsSuite
+              timeline={timeline}
+              corridor={corridor}
+              recommendations={recommendations}
+              onTriggerOptimizationSequence={handleTriggerFlagshipBuild}
+              onSetLayerState={setLayerState}
+              onFlyToCoords={handleFlyTo}
+              onSetSimulatedCarPosition={setSimulatedCarPosition}
+              activeAnimation={null}
+              setActiveAnimation={() => {}}
+            />
+          </div>
+        )}
       </main>
 
       {/* Floating Station Detail Drawer */}
@@ -385,10 +422,10 @@ export function App() {
         onClose={() => setShowProvenanceModal(false)}
       />
 
-      {/* Minimal Footer */}
-      <footer className="border-t border-white/10 px-6 py-4 mt-8 text-xs text-slate-500 flex flex-wrap items-center justify-between gap-4 font-mono-tech">
+      {/* Minimal Aerospace Footer */}
+      <footer className="border-t border-white/[0.08] px-6 py-4 mt-8 text-xs text-slate-500 flex flex-wrap items-center justify-between gap-4 font-mono-tech">
         <div>
-          <span>VOLTPUNE · T.Y. B.Tech CSE (AI & DS) Mini-Project · Data Visualization Using Python</span>
+          <span>VOLTPUNE · T.Y. B.Tech CSE (AI & DS) Mini-Project · Autonomous Spatial Intelligence</span>
         </div>
         <div className="flex items-center gap-4">
           <button onClick={() => setShowProvenanceModal(true)} className="hover:text-slate-300 cursor-pointer">

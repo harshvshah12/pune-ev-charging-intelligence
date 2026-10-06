@@ -2,16 +2,16 @@
 
 @layer base {
   :root {
-    --bg-primary: #070a11;
-    --bg-secondary: #0d131f;
-    --bg-surface: #131b2c;
-    --bg-elevated: #1a253c;
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.16);
-    --accent-emerald: #10b981;
-    --accent-cyan: #06b6d4;
-    --accent-blue: #3b82f6;
-    --accent-amber: #f59e0b;
+    --bg-primary: #040608;
+    --bg-secondary: #080c14;
+    --bg-surface: #0e1422;
+    --bg-elevated: #151e32;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --accent-emerald: #00f59b;
+    --accent-cyan: #00e5ff;
+    --accent-amber: #ff9900;
+    --accent-rose: #f43f5e;
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
@@ -32,29 +32,55 @@
 /* Custom technical monospace accents */
 .font-mono-tech {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
 }
 
-/* Subtle glass surface for panels */
+/* Elite Titanium Glass Surfaces */
 .glass-panel {
-  background: rgba(13, 19, 31, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(10, 16, 26, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-panel-elevated {
-  background: rgba(19, 27, 44, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(14, 21, 35, 0.90);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 14px 40px -10px rgba(0, 0, 0, 0.75);
 }
 
-/* Subtle pulse animation */
+.glass-panel-interactive {
+  background: rgba(10, 16, 26, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-interactive:hover {
+  background: rgba(14, 23, 38, 0.88);
+  border-color: rgba(0, 245, 155, 0.3);
+  box-shadow: 0 8px 30px -8px rgba(0, 245, 155, 0.15);
+}
+
+/* Vehicle Sonar Radar Animation */
+@keyframes car-sonar {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* High-tech pulsing beacon */
 @keyframes beacon-pulse {
   0% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1.2); opacity: 0.3; }
+  50% { transform: scale(1.18); opacity: 0.35; }
   100% { transform: scale(0.95); opacity: 0.8; }
 }
 
@@ -62,45 +88,53 @@
   animation: beacon-pulse 2.2s infinite ease-in-out;
 }
 
+/* Subtle route glow scan */
+@keyframes route-glow-scan {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -20; }
+}
+
 /* MapLibre popup and canvas overrides */
 .maplibregl-popup-content {
-  background: #0d131f !important;
+  background: #080d16 !important;
   color: #f8fafc !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 8px !important;
-  padding: 12px 14px !important;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.8) !important;
+  border: 1px solid rgba(0, 245, 155, 0.3) !important;
+  border-radius: 12px !important;
+  padding: 14px 16px !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
 }
 
 .maplibregl-popup-anchor-top .maplibregl-popup-tip {
-  border-bottom-color: #0d131f !important;
+  border-bottom-color: #080d16 !important;
 }
 .maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
-  border-top-color: #0d131f !important;
+  border-top-color: #080d16 !important;
 }
 .maplibregl-popup-anchor-left .maplibregl-popup-tip {
-  border-right-color: #0d131f !important;
+  border-right-color: #080d16 !important;
 }
 .maplibregl-popup-anchor-right .maplibregl-popup-tip {
-  border-left-color: #0d131f !important;
+  border-left-color: #080d16 !important;
 }
 .maplibregl-popup-close-button {
   color: #94a3b8 !important;
-  padding: 4px 8px !important;
+  padding: 6px 10px !important;
+  font-size: 14px !important;
 }
 
-/* Custom scrollbars */
+/* Custom sleek scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #070a11;
+  background: #040608;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 3px;
+  background: #182234;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #263550;
 }

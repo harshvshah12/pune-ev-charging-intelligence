@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TimeSeriesYear, CorridorWaypoint, SimulationCorridor, Recommendation } from '../types';
-import { Play, Pause, RotateCcw, Navigation, BatteryCharging, Flame, Award, Sliders, ArrowRight, Zap, CheckCircle2 } from 'lucide-react';
+import { Play, Pause, RotateCcw, Navigation, BatteryCharging, Flame, Award, Sliders, ArrowRight, Zap, CheckCircle2, Gauge, Radio, FastForward } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface SimulationsSuiteProps {
@@ -27,7 +27,7 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
   setActiveAnimation
 }) => {
   // Tab selector for animations
-  const [selectedTab, setSelectedTab] = useState<'growth' | 'journey' | 'slider' | 'funnel'>('growth');
+  const [selectedTab, setSelectedTab] = useState<'journey' | 'growth' | 'slider' | 'funnel'>('journey');
 
   // Animation 1: EV Growth scrubber
   const [currentYearIdx, setCurrentYearIdx] = useState<number>(timeline.length - 1);
@@ -38,16 +38,19 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
     if (isPlayingGrowth) {
       interval = setInterval(() => {
         setCurrentYearIdx((prev) => (prev < timeline.length - 1 ? prev + 1 : 0));
-      }, 1500);
+      }, 1400);
     }
     return () => clearInterval(interval);
   }, [isPlayingGrowth, timeline.length]);
 
   const currentYearData = timeline[currentYearIdx] || timeline[timeline.length - 1];
 
-  // Animation 7: Simulated EV Journey
+  // Animation 7: Simulated EV Journey with Speed multiplier
   const [currentWaypointIdx, setCurrentWaypointIdx] = useState<number>(0);
   const [isPlayingJourney, setIsPlayingJourney] = useState<boolean>(false);
+  const [simSpeed, setSimSpeed] = useState<number>(1); // 1 = 2000ms, 2 = 1000ms, 3 = 600ms
+
+  const stepDuration = simSpeed === 3 ? 600 : simSpeed === 2 ? 1100 : 2000;
 
   useEffect(() => {
     let timer: any;
@@ -60,10 +63,10 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
             return prev;
           }
         });
-      }, 2200);
+      }, stepDuration);
     }
     return () => clearInterval(timer);
-  }, [isPlayingJourney, corridor?.waypoints]);
+  }, [isPlayingJourney, corridor?.waypoints, stepDuration]);
 
   // Synchronize waypoint to parent safely inside an effect
   useEffect(() => {
@@ -94,47 +97,68 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
     onSetSimulatedCarPosition(null);
   };
 
+  const handleJumpWaypoint = (idx: number) => {
+    setCurrentWaypointIdx(idx);
+    if (corridor?.waypoints?.[idx]) {
+      const wp = corridor.waypoints[idx];
+      onSetSimulatedCarPosition(wp);
+      onFlyToCoords([wp.lon, wp.lat]);
+    }
+  };
+
   // Animation 8: Before / After Slider
   const [sliderSplit, setSliderSplit] = useState<number>(50);
 
   return (
-    <div className="glass-panel p-4 rounded-xl border border-white/10 space-y-3">
+    <div className="glass-panel p-4.5 rounded-2xl border border-white/[0.08] space-y-3.5 shadow-2xl">
       {/* Header & Tabs */}
-      <div className="flex flex-wrap items-center justify-between border-b border-white/10 pb-2 gap-2">
-        <div className="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-wider">
-          <Zap className="w-4 h-4 text-emerald-400" />
-          <span>Analytical Animation & Simulation Suite</span>
+      <div className="flex flex-wrap items-center justify-between border-b border-white/[0.08] pb-3 gap-2">
+        <div className="flex items-center gap-2.5 text-xs font-bold text-white uppercase tracking-wider font-mono-tech">
+          <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+            <Zap className="w-3.5 h-3.5" />
+          </div>
+          <span>Kinetic Simulation & Telemetry Engine</span>
         </div>
 
-        <div className="flex items-center gap-1 text-[11px] font-mono-tech">
+        {/* Tab Buttons */}
+        <div className="flex items-center gap-1.5 text-[11px] font-mono-tech">
+          <button
+            onClick={() => setSelectedTab('journey')}
+            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all flex items-center gap-1.5 ${
+              selectedTab === 'journey'
+                ? 'bg-emerald-500 text-black font-bold shadow-md shadow-emerald-500/20'
+                : 'bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]'
+            }`}
+          >
+            <Radio className="w-3.5 h-3.5" />
+            <span>EV Corridor Journey</span>
+          </button>
           <button
             onClick={() => setSelectedTab('growth')}
-            className={`px-2.5 py-1 rounded cursor-pointer transition-all ${
-              selectedTab === 'growth' ? 'bg-cyan-500 text-black font-bold' : 'bg-white/5 text-slate-300 hover:bg-white/10'
+            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all ${
+              selectedTab === 'growth'
+                ? 'bg-cyan-500 text-black font-bold shadow-md shadow-cyan-500/20'
+                : 'bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]'
             }`}
           >
             EV Growth (2020-2026)
           </button>
           <button
-            onClick={() => setSelectedTab('journey')}
-            className={`px-2.5 py-1 rounded cursor-pointer transition-all ${
-              selectedTab === 'journey' ? 'bg-emerald-500 text-black font-bold' : 'bg-white/5 text-slate-300 hover:bg-white/10'
-            }`}
-          >
-            EV Journey Sim
-          </button>
-          <button
             onClick={() => setSelectedTab('slider')}
-            className={`px-2.5 py-1 rounded cursor-pointer transition-all ${
-              selectedTab === 'slider' ? 'bg-amber-500 text-black font-bold' : 'bg-white/5 text-slate-300 hover:bg-white/10'
+            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all ${
+              selectedTab === 'slider'
+                ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
+                : 'bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]'
             }`}
           >
             Before vs After
           </button>
           <button
             onClick={() => setSelectedTab('funnel')}
-            className={`px-2.5 py-1 rounded cursor-pointer transition-all ${
-              selectedTab === 'funnel' ? 'bg-purple-500 text-white font-bold' : 'bg-white/5 text-slate-300 hover:bg-white/10'
+            className={`px-3 py-1.5 rounded-lg cursor-pointer transition-all ${
+              selectedTab === 'funnel'
+                ? 'bg-purple-500 text-white font-bold shadow-md shadow-purple-500/20'
+                : 'bg-white/[0.04] text-slate-300 hover:bg-white/[0.08]'
             }`}
           >
             Selection Funnel
@@ -142,14 +166,133 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
         </div>
       </div>
 
-      {/* TAB 1: EV Growth Scrubber */}
+      {/* TAB 1: Simulated EV Corridor Journey (Default) */}
+      {selectedTab === 'journey' && corridor && (
+        <div className="space-y-3.5 pt-1">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div className="text-xs font-bold text-white flex items-center gap-2 font-mono-tech">
+                <span className="text-emerald-400">{corridor.title}</span>
+                <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-mono-tech tracking-wider">
+                  GLOWING VECTOR TRACER ACTIVE
+                </span>
+              </div>
+              <div className="text-[11px] text-slate-400 font-mono-tech mt-0.5">
+                {corridor.total_distance_km} km Commute Corridor · {corridor.waypoints.length} Spatial Waypoints · NH-48 / Ganeshkhind Road
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Speed Multiplier Pill */}
+              <div className="flex items-center bg-white/[0.04] p-1 rounded-lg border border-white/10 text-[10px] font-mono-tech">
+                <button
+                  onClick={() => setSimSpeed(1)}
+                  className={`px-2 py-0.5 rounded cursor-pointer ${simSpeed === 1 ? 'bg-emerald-500 text-black font-bold' : 'text-slate-400'}`}
+                >
+                  1x
+                </button>
+                <button
+                  onClick={() => setSimSpeed(2)}
+                  className={`px-2 py-0.5 rounded cursor-pointer ${simSpeed === 2 ? 'bg-emerald-500 text-black font-bold' : 'text-slate-400'}`}
+                >
+                  2x
+                </button>
+                <button
+                  onClick={() => setSimSpeed(3)}
+                  className={`px-2 py-0.5 rounded cursor-pointer ${simSpeed === 3 ? 'bg-emerald-500 text-black font-bold' : 'text-slate-400'}`}
+                >
+                  3x
+                </button>
+              </div>
+
+              {!isPlayingJourney ? (
+                <button
+                  onClick={handleStartJourney}
+                  className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-bold font-mono-tech text-xs flex items-center gap-1.5 cursor-pointer shadow-lg shadow-emerald-500/20 transition-all"
+                >
+                  <Play className="w-3.5 h-3.5 fill-black" />
+                  <span>START JOURNEY TRACER</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleStopJourney}
+                  className="px-3.5 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-bold font-mono-tech text-xs flex items-center gap-1.5 cursor-pointer shadow-lg shadow-rose-500/20 transition-all"
+                >
+                  <Pause className="w-3.5 h-3.5 fill-white" />
+                  <span>HALT SIMULATION</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Stepper Scrubber of Waypoints */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-[10px] font-mono-tech text-slate-400">
+              <span>TRACED WAYPOINT PROGRESSION:</span>
+              <span className="text-emerald-400 font-bold">
+                {currentWaypointIdx + 1} OF {corridor.waypoints.length} NODES
+              </span>
+            </div>
+            <div className="grid grid-cols-9 gap-1.5">
+              {corridor.waypoints.map((wp, idx) => (
+                <button
+                  key={wp.name}
+                  onClick={() => handleJumpWaypoint(idx)}
+                  className={`p-1.5 rounded-lg border text-center transition-all cursor-pointer ${
+                    idx === currentWaypointIdx
+                      ? 'bg-emerald-500 text-black border-emerald-400 font-bold shadow-md shadow-emerald-500/30'
+                      : idx < currentWaypointIdx
+                      ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30'
+                      : 'bg-white/[0.03] text-slate-400 border-white/5 hover:bg-white/[0.08]'
+                  }`}
+                  title={`${wp.name} (${wp.speed_kmh} km/h, ${wp.soc_pct}% SoC)`}
+                >
+                  <div className="text-[10px] font-mono-tech">#{idx + 1}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Current Vehicle Telemetry Cockpit HUD */}
+          {currentWaypoint && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 bg-[#080d16] p-3 rounded-xl border border-white/[0.08] font-mono-tech text-xs shadow-inner">
+              <div>
+                <div className="text-[10px] text-slate-400 uppercase tracking-wider">Active Waypoint</div>
+                <div className="text-white font-bold truncate mt-0.5">{currentWaypoint.name}</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-slate-400 uppercase tracking-wider">Ground Speed</div>
+                <div className="text-cyan-400 font-bold mt-0.5">{currentWaypoint.speed_kmh} km/h</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-slate-400 uppercase tracking-wider">Battery State (SoC)</div>
+                <div className="text-emerald-400 font-bold flex items-center gap-1.5 mt-0.5">
+                  <span>{currentWaypoint.soc_pct}%</span>
+                  <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      style={{ width: `${currentWaypoint.soc_pct}%` }}
+                      className={`h-full ${currentWaypoint.soc_pct > 70 ? 'bg-emerald-400' : 'bg-amber-400'}`}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="text-[10px] text-slate-400 uppercase tracking-wider">Road Segment</div>
+                <div className="text-amber-400 font-bold truncate mt-0.5">{currentWaypoint.segment}</div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 2: EV Growth Scrubber */}
       {selectedTab === 'growth' && currentYearData && (
         <div className="space-y-3 pt-1">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <button
                 onClick={() => setIsPlayingGrowth(!isPlayingGrowth)}
-                className="w-7 h-7 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black flex items-center justify-center cursor-pointer transition-all"
+                className="w-8 h-8 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black flex items-center justify-center cursor-pointer transition-all shadow-md shadow-cyan-500/20"
               >
                 {isPlayingGrowth ? <Pause className="w-3.5 h-3.5 fill-black" /> : <Play className="w-3.5 h-3.5 fill-black" />}
               </button>
@@ -165,10 +308,10 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
 
             <div className="text-right">
               <div className="text-base font-bold font-mono-tech text-cyan-400">
-                {currentYearData.cumulative_evs.toLocaleString()} EVs
+                {currentYearData.cumulative_evs.toLocaleString()} Cumulative EVs
               </div>
               <div className="text-[10px] text-emerald-400 font-mono-tech">
-                {currentYearData.ev_penetration_pct}% Penetration
+                {currentYearData.ev_penetration_pct}% Fleet Penetration
               </div>
             </div>
           </div>
@@ -201,9 +344,9 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
 
           {/* Fleet Breakdown Bar */}
           <div className="space-y-1 text-xs">
-            <div className="flex justify-between text-[11px] text-slate-300">
+            <div className="flex justify-between text-[11px] text-slate-300 font-mono-tech">
               <span>Category Fleet Mix ({currentYearData.year}):</span>
-              <span className="font-mono-tech text-slate-400">
+              <span className="text-slate-400">
                 2W: {Math.round((currentYearData.e2w / currentYearData.new_registrations) * 100)}% · 4W: {Math.round((currentYearData.e4w / currentYearData.new_registrations) * 100)}%
               </span>
             </div>
@@ -233,75 +376,12 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
         </div>
       )}
 
-      {/* TAB 2: Simulated EV Corridor Journey */}
-      {selectedTab === 'journey' && corridor && (
-        <div className="space-y-3 pt-1">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-xs font-bold text-white flex items-center gap-2">
-                <span>{corridor.title}</span>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 font-mono-tech">
-                  SIMULATION
-                </span>
-              </div>
-              <div className="text-[11px] text-slate-400">
-                {corridor.total_distance_km} km · ~{corridor.typical_duration_min} min commute corridor
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {!isPlayingJourney ? (
-                <button
-                  onClick={handleStartJourney}
-                  className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-md shadow-emerald-500/20"
-                >
-                  <Play className="w-3.5 h-3.5 fill-black" />
-                  <span>Start Journey</span>
-                </button>
-              ) : (
-                <button
-                  onClick={handleStopJourney}
-                  className="px-3 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-md shadow-rose-500/20"
-                >
-                  <Pause className="w-3.5 h-3.5 fill-white" />
-                  <span>Stop Simulation</span>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Current Vehicle Telemetry HUD */}
-          {currentWaypoint && (
-            <div className="grid grid-cols-4 gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-white/5 font-mono-tech text-xs">
-              <div>
-                <div className="text-[10px] text-slate-400">Waypoint</div>
-                <div className="text-white font-bold truncate">{currentWaypoint.name}</div>
-              </div>
-              <div>
-                <div className="text-[10px] text-slate-400">Speed</div>
-                <div className="text-cyan-400 font-bold">{currentWaypoint.speed_kmh} km/h</div>
-              </div>
-              <div>
-                <div className="text-[10px] text-slate-400">Battery SoC</div>
-                <div className="text-emerald-400 font-bold flex items-center gap-1">
-                  <span>{currentWaypoint.soc_pct}%</span>
-                </div>
-              </div>
-              <div>
-                <div className="text-[10px] text-slate-400">Corridor Node</div>
-                <div className="text-amber-400 font-bold truncate">{currentWaypoint.segment}</div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
       {/* TAB 3: Before vs After Split Slider */}
       {selectedTab === 'slider' && (
         <div className="space-y-3 pt-1">
-          <div className="flex justify-between items-center text-xs">
-            <span className="font-bold text-slate-300">BEFORE (Baseline 83.5% Coverage)</span>
-            <span className="font-bold text-emerald-400">AFTER (+10 Stations 90.0% Coverage)</span>
+          <div className="flex justify-between items-center text-xs font-mono-tech">
+            <span className="font-bold text-slate-300">BASELINE 2025 (83.5% Coverage)</span>
+            <span className="font-bold text-emerald-400">AFTER +10 STATIONS (90.0% Coverage)</span>
           </div>
 
           <input
@@ -313,19 +393,19 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
             className="w-full accent-amber-400 cursor-pointer h-2 bg-slate-800 rounded"
           />
 
-          <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="bg-slate-900/60 p-2.5 rounded-lg border border-white/5 space-y-1">
-              <div className="text-slate-400 font-medium">Baseline Network:</div>
+          <div className="grid grid-cols-2 gap-3 text-xs font-mono-tech">
+            <div className="bg-[#080d16] p-3 rounded-xl border border-white/5 space-y-1">
+              <div className="text-slate-400 font-bold uppercase text-[10px]">Baseline Infrastructure:</div>
               <div className="text-slate-300">· 1,354 recorded points (177 public fast)</div>
-              <div className="text-slate-300">· Avg nearest fast charger: <span className="font-mono-tech text-amber-400">1.10 km</span></div>
-              <div className="text-slate-300">· Severe deficits in Hadapsar & Nagar Rd</div>
+              <div className="text-slate-300">· Avg nearest fast charger: <span className="text-amber-400">1.10 km</span></div>
+              <div className="text-slate-300">· Severe deficits in Hadapsar & Nagar Road</div>
             </div>
 
-            <div className="bg-emerald-950/30 p-2.5 rounded-lg border border-emerald-500/20 space-y-1">
-              <div className="text-emerald-300 font-medium">After 10 Sited Hubs:</div>
-              <div className="text-slate-300">· Citywide coverage expands to <span className="font-mono-tech text-emerald-400 font-bold">90.0%</span></div>
-              <div className="text-slate-300">· Avg nearest fast charger: <span className="font-mono-tech text-emerald-400">0.99 km</span></div>
-              <div className="text-slate-300">· 10 multi-standard DC fast hubs installed</div>
+            <div className="bg-emerald-950/20 p-3 rounded-xl border border-emerald-500/20 space-y-1">
+              <div className="text-emerald-400 font-bold uppercase text-[10px]">Optimized 10 Sited Hubs:</div>
+              <div className="text-slate-300">· Citywide coverage expands to <span className="text-emerald-400 font-bold">90.0%</span></div>
+              <div className="text-slate-300">· Avg nearest fast charger: <span className="text-emerald-400 font-bold">0.99 km</span></div>
+              <div className="text-slate-300">· 10 multi-standard high-power hubs sited</div>
             </div>
           </div>
         </div>
@@ -335,30 +415,30 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
       {selectedTab === 'funnel' && (
         <div className="space-y-2 pt-1 text-xs">
           <div className="grid grid-cols-5 gap-2 text-center font-mono-tech">
-            <div className="bg-slate-900/80 p-2 rounded-lg border border-white/10">
-              <div className="text-slate-400 text-[10px]">1. Generated</div>
-              <div className="text-lg font-bold text-white">100</div>
-              <div className="text-[9px] text-slate-500">Spatial Nodes</div>
+            <div className="bg-[#080d16] p-2.5 rounded-xl border border-white/10">
+              <div className="text-slate-400 text-[10px] uppercase">1. Generated</div>
+              <div className="text-xl font-black text-white">100</div>
+              <div className="text-[9px] text-slate-500">Spatial Candidates</div>
             </div>
-            <div className="bg-slate-900/80 p-2 rounded-lg border border-cyan-500/30">
-              <div className="text-cyan-400 text-[10px]">2. Viable</div>
-              <div className="text-lg font-bold text-cyan-400">72</div>
+            <div className="bg-[#080d16] p-2.5 rounded-xl border border-cyan-500/30">
+              <div className="text-cyan-400 text-[10px] uppercase">2. Viable</div>
+              <div className="text-xl font-black text-cyan-400">72</div>
               <div className="text-[9px] text-slate-500">&lt;200m to Arterial</div>
             </div>
-            <div className="bg-slate-900/80 p-2 rounded-lg border border-amber-500/30">
-              <div className="text-amber-400 text-[10px]">3. Underserved</div>
-              <div className="text-lg font-bold text-amber-400">43</div>
+            <div className="bg-[#080d16] p-2.5 rounded-xl border border-amber-500/30">
+              <div className="text-amber-400 text-[10px] uppercase">3. Underserved</div>
+              <div className="text-xl font-black text-amber-400">43</div>
               <div className="text-[9px] text-slate-500">Deficit &gt;1.05km</div>
             </div>
-            <div className="bg-slate-900/80 p-2 rounded-lg border border-rose-500/30">
-              <div className="text-rose-400 text-[10px]">4. High-Value</div>
-              <div className="text-lg font-bold text-rose-400">21</div>
+            <div className="bg-[#080d16] p-2.5 rounded-xl border border-rose-500/30">
+              <div className="text-rose-400 text-[10px] uppercase">4. High-Value</div>
+              <div className="text-xl font-black text-rose-400">21</div>
               <div className="text-[9px] text-slate-500">Top Prelim Score</div>
             </div>
-            <div className="bg-emerald-950/80 p-2 rounded-lg border border-emerald-500/50 shadow-lg shadow-emerald-500/10">
-              <div className="text-emerald-400 text-[10px]">5. Sited</div>
-              <div className="text-lg font-bold text-emerald-400">10</div>
-              <div className="text-[9px] text-emerald-300">Greedy Submodular</div>
+            <div className="bg-emerald-950/80 p-2.5 rounded-xl border border-emerald-500/50 shadow-lg shadow-emerald-500/10">
+              <div className="text-emerald-400 text-[10px] uppercase">5. Sited</div>
+              <div className="text-xl font-black text-emerald-400">10</div>
+              <div className="text-[9px] text-emerald-300">Submodular Greedy</div>
             </div>
           </div>
         </div>
