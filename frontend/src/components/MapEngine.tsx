@@ -63,6 +63,7 @@ export const MapEngine: React.FC<MapEngineProps> = ({
   const carMarkerRef = useRef<maplibregl.Marker | null>(null);
   const pulseAnimRef = useRef<number | null>(null);
   const prevCarPosRef = useRef<CorridorWaypoint | null>(null);
+  const prevCorridorTitleRef = useRef<string | null>(null);
 
   // Basemap style switcher: 'dark' (ESRI Dark Canvas) | 'satellite' (ESRI World Imagery)
   const [basemapType, setBasemapType] = useState<'dark' | 'satellite'>('dark');
@@ -689,6 +690,19 @@ export const MapEngine: React.FC<MapEngineProps> = ({
           }
         ]
       });
+
+      // Smoothly frame camera onto the selected corridor if switched
+      if (corridor.title && corridor.title !== prevCorridorTitleRef.current && !simulatedCarPosition) {
+        prevCorridorTitleRef.current = corridor.title;
+        const bounds = new maplibregl.LngLatBounds();
+        corridor.waypoints.forEach((w) => bounds.extend([w.lon, w.lat]));
+        map.current.fitBounds(bounds, {
+          padding: 80,
+          pitch: pitch3D ? 45 : 0,
+          duration: 1500,
+          maxZoom: 14.2
+        });
+      }
     }
 
     // Update traveled line segment

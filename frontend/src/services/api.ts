@@ -121,7 +121,11 @@ export async function fetchOptimizationData(): Promise<{ recommendations: Recomm
   }
 }
 
-export async function fetchTimeSeries(): Promise<{ timeline: TimeSeriesYear[]; simulation_corridor: SimulationCorridor }> {
+export async function fetchTimeSeries(): Promise<{
+  timeline: TimeSeriesYear[];
+  simulation_corridor: SimulationCorridor;
+  simulation_corridors?: SimulationCorridor[];
+}> {
   try {
     const res = await fetch(`${API_BASE}/time-series`);
     if (res.ok) return await res.json();

@@ -6,6 +6,8 @@ import confetti from 'canvas-confetti';
 interface SimulationsSuiteProps {
   timeline: TimeSeriesYear[];
   corridor: SimulationCorridor;
+  corridors?: SimulationCorridor[];
+  onSelectCorridor?: (c: SimulationCorridor) => void;
   recommendations: Recommendation[];
   onTriggerOptimizationSequence: () => void;
   onSetLayerState: (fn: (prev: any) => any) => void;
@@ -18,6 +20,8 @@ interface SimulationsSuiteProps {
 export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
   timeline,
   corridor,
+  corridors = [],
+  onSelectCorridor,
   recommendations,
   onTriggerOptimizationSequence,
   onSetLayerState,
@@ -97,6 +101,39 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
     onSetSimulatedCarPosition(null);
   };
 
+  const handleResetJourney = () => {
+    setIsPlayingJourney(false);
+    setCurrentWaypointIdx(0);
+    if (corridor?.waypoints?.[0]) {
+      const wp = corridor.waypoints[0];
+      onSetSimulatedCarPosition(wp);
+      onFlyToCoords([wp.lon, wp.lat]);
+    } else {
+      onSetSimulatedCarPosition(null);
+    }
+  };
+
+  const handleStepForward = () => {
+    if (corridor?.waypoints && currentWaypointIdx < corridor.waypoints.length - 1) {
+      handleJumpWaypoint(currentWaypointIdx + 1);
+    }
+  };
+
+  const handleStepBack = () => {
+    if (corridor?.waypoints && currentWaypointIdx > 0) {
+      handleJumpWaypoint(currentWaypointIdx - 1);
+    }
+  };
+
+  const handleCorridorChange = (newCorridor: SimulationCorridor) => {
+    setIsPlayingJourney(false);
+    setCurrentWaypointIdx(0);
+    onSetSimulatedCarPosition(null);
+    if (onSelectCorridor) {
+      onSelectCorridor(newCorridor);
+    }
+  };
+
   const handleJumpWaypoint = (idx: number) => {
     setCurrentWaypointIdx(idx);
     if (corridor?.waypoints?.[idx]) {
@@ -169,6 +206,66 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
       {/* TAB 1: Simulated EV Corridor Journey (Default) */}
       {selectedTab === 'journey' && corridor && (
         <div className="space-y-3.5 pt-1">
+          {/* Corridor Selection Grid (8 Authentic Corridors) */}
+          {((corridors && corridors.length > 0 ? corridors : [corridor])).length > 1 && (
+            <div className="space-y-2 border-b border-white/[0.08] pb-3.5">
+              <div className="flex items-center justify-between text-[10px] font-mono-tech text-slate-400">
+                <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-slate-300">
+                  <Navigation className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>SELECT PUNE ARTERIAL EV CORRIDOR ({(corridors && corridors.length > 0 ? corridors : [corridor]).length} AUTHENTIC ROUTES):</span>
+                </span>
+                <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
+                  ACTIVE ROUTE: {corridor.category || 'Corridor'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {(corridors && corridors.length > 0 ? corridors : [corridor]).map((c, i) => {
+                  const isSelected = c.id ? c.id === corridor.id : c.title === corridor.title;
+                  return (
+                    <button
+                      key={c.id || c.title}
+                      onClick={() => handleCorridorChange(c)}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden group ${
+                        isSelected
+                          ? 'bg-emerald-500/10 border-emerald-400 shadow-lg shadow-emerald-500/20'
+                          : 'bg-white/[0.02] border-white/[0.07] hover:bg-white/[0.06] hover:border-white/20'
+                      }`}
+                    >
+                      {isSelected && (
+                        <div className="absolute top-0 right-0 w-8 h-8 bg-emerald-400/20 rounded-bl-full pointer-events-none" />
+                      )}
+                      <div className="flex items-center justify-between gap-1 text-[9px] font-mono-tech mb-1">
+                        <span
+                          className={`px-1.5 py-0.5 rounded font-bold ${
+                            isSelected
+                              ? 'bg-emerald-400 text-black'
+                              : 'bg-white/[0.06] text-slate-300 group-hover:text-white'
+                          }`}
+                        >
+                          C0{i + 1}
+                        </span>
+                        <span className="text-slate-400 font-mono-tech">{c.total_distance_km} km</span>
+                      </div>
+                      <div
+                        className={`text-[11px] font-bold truncate leading-tight ${
+                          isSelected ? 'text-white' : 'text-slate-300 group-hover:text-white'
+                        }`}
+                      >
+                        {c.title}
+                      </div>
+                      <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono-tech mt-1.5">
+                        <span className="truncate text-slate-400 max-w-[120px]">{c.category || 'Transit'}</span>
+                        <span className="text-[9px] text-slate-400 font-bold ml-1">{c.waypoints.length} nodes</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Active Corridor Control Bar */}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="text-xs font-bold text-white flex items-center gap-2 font-mono-tech">
@@ -178,11 +275,11 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
                 </span>
               </div>
               <div className="text-[11px] text-slate-400 font-mono-tech mt-0.5">
-                {corridor.total_distance_km} km Commute Corridor · {corridor.waypoints.length} Spatial Waypoints · NH-48 / Ganeshkhind Road
+                {corridor.total_distance_km} km Commute · {corridor.waypoints.length} Spatial Nodes · {corridor.category || 'Arterial Corridor'} · Est. {corridor.typical_duration_min || 32} min ({corridor.energy_consumed_kwh || 3.8} kWh)
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {/* Speed Multiplier Pill */}
               <div className="flex items-center bg-white/[0.04] p-1 rounded-lg border border-white/10 text-[10px] font-mono-tech">
                 <button
@@ -205,6 +302,37 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
                 </button>
               </div>
 
+              {/* Step Controls */}
+              <div className="flex items-center bg-white/[0.04] p-1 rounded-lg border border-white/10 text-[10px] font-mono-tech">
+                <button
+                  onClick={handleStepBack}
+                  disabled={currentWaypointIdx === 0}
+                  className="px-2 py-0.5 rounded cursor-pointer text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="Previous Waypoint"
+                >
+                  ◀
+                </button>
+                <span className="px-1 text-slate-400">|</span>
+                <button
+                  onClick={handleStepForward}
+                  disabled={!corridor.waypoints || currentWaypointIdx >= corridor.waypoints.length - 1}
+                  className="px-2 py-0.5 rounded cursor-pointer text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="Next Waypoint"
+                >
+                  ▶
+                </button>
+              </div>
+
+              {/* Reset Button */}
+              <button
+                onClick={handleResetJourney}
+                className="p-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 cursor-pointer transition-all"
+                title="Reset Journey to Start"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+              </button>
+
+              {/* Play / Halt Button */}
               {!isPlayingJourney ? (
                 <button
                   onClick={handleStartJourney}
@@ -233,12 +361,12 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
                 {currentWaypointIdx + 1} OF {corridor.waypoints.length} NODES
               </span>
             </div>
-            <div className="grid grid-cols-9 gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
               {corridor.waypoints.map((wp, idx) => (
                 <button
                   key={wp.name}
                   onClick={() => handleJumpWaypoint(idx)}
-                  className={`p-1.5 rounded-lg border text-center transition-all cursor-pointer ${
+                  className={`flex-1 min-w-[70px] p-1.5 rounded-lg border text-center transition-all cursor-pointer ${
                     idx === currentWaypointIdx
                       ? 'bg-emerald-500 text-black border-emerald-400 font-bold shadow-md shadow-emerald-500/30'
                       : idx < currentWaypointIdx
@@ -248,6 +376,7 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
                   title={`${wp.name} (${wp.speed_kmh} km/h, ${wp.soc_pct}% SoC)`}
                 >
                   <div className="text-[10px] font-mono-tech">#{idx + 1}</div>
+                  <div className="text-[9px] font-mono-tech truncate mt-0.5 opacity-80">{wp.name.split(' ')[0]}</div>
                 </button>
               ))}
             </div>
@@ -262,16 +391,26 @@ export const SimulationsSuite: React.FC<SimulationsSuiteProps> = ({
               </div>
               <div>
                 <div className="text-[10px] text-slate-400 uppercase tracking-wider">Ground Speed</div>
-                <div className="text-cyan-400 font-bold mt-0.5">{currentWaypoint.speed_kmh} km/h</div>
+                <div className="text-cyan-400 font-bold mt-0.5 flex items-center gap-1.5">
+                  <Gauge className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>{currentWaypoint.speed_kmh} km/h</span>
+                </div>
               </div>
               <div>
                 <div className="text-[10px] text-slate-400 uppercase tracking-wider">Battery State (SoC)</div>
                 <div className="text-emerald-400 font-bold flex items-center gap-1.5 mt-0.5">
+                  <BatteryCharging className="w-3.5 h-3.5 text-emerald-400" />
                   <span>{currentWaypoint.soc_pct}%</span>
-                  <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden ml-1">
                     <div
                       style={{ width: `${currentWaypoint.soc_pct}%` }}
-                      className={`h-full ${currentWaypoint.soc_pct > 70 ? 'bg-emerald-400' : 'bg-amber-400'}`}
+                      className={`h-full transition-all duration-300 ${
+                        currentWaypoint.soc_pct > 70
+                          ? 'bg-emerald-400'
+                          : currentWaypoint.soc_pct > 40
+                          ? 'bg-amber-400'
+                          : 'bg-rose-500'
+                      }`}
                     />
                   </div>
                 </div>

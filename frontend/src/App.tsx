@@ -61,6 +61,7 @@ export function App() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [timeline, setTimeline] = useState<TimeSeriesYear[]>([]);
   const [corridor, setCorridor] = useState<SimulationCorridor | null>(null);
+  const [corridors, setCorridors] = useState<SimulationCorridor[]>([]);
 
   // Map & Layer State
   const [layerState, setLayerState] = useState<MapLayerState>({
@@ -122,6 +123,11 @@ export function App() {
         setRecommendations(optData.recommendations);
         setTimeline(tsData.timeline);
         setCorridor(tsData.simulation_corridor);
+        if (tsData.simulation_corridors && tsData.simulation_corridors.length > 0) {
+          setCorridors(tsData.simulation_corridors);
+        } else if (tsData.simulation_corridor) {
+          setCorridors([tsData.simulation_corridor]);
+        }
       } catch (err) {
         console.error('Failed to load initial datasets:', err);
       } finally {
@@ -130,6 +136,15 @@ export function App() {
     }
     loadData();
   }, []);
+
+  // Handle Corridor Route Switching
+  const handleSelectCorridor = (selected: SimulationCorridor) => {
+    setCorridor(selected);
+    setSimulatedCarPosition(null);
+    if (selected.waypoints && selected.waypoints.length > 0) {
+      setFlyToCoords([selected.waypoints[0].lon, selected.waypoints[0].lat]);
+    }
+  };
 
   // CPO list for filter dropdown
   const cpoList = Array.from(new Set(stations.map((s) => s.cpo).filter(Boolean))).sort();
@@ -387,6 +402,8 @@ export function App() {
             <SimulationsSuite
               timeline={timeline}
               corridor={corridor}
+              corridors={corridors}
+              onSelectCorridor={handleSelectCorridor}
               recommendations={recommendations}
               onTriggerOptimizationSequence={handleTriggerFlagshipBuild}
               onSetLayerState={setLayerState}

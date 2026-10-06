@@ -115,7 +115,10 @@ export interface CorridorWaypoint {
 }
 
 export interface SimulationCorridor {
+  id?: string;
   title: string;
+  subtitle?: string;
+  category?: string;
   total_distance_km: number;
   typical_duration_min: number;
   energy_consumed_kwh: number;
