@@ -11,6 +11,8 @@ VoltPune is a **production-quality, 3D geospatial mobility intelligence platform
 
 Rather than relying on generic synthetic templates or fabricated data, VoltPune is grounded in **1,354 Bureau of Energy Efficiency (BEE)-verified charging points**, **264,166 VAHAN vehicle registration records**, **15 PMC administrative ward boundaries**, and **532.6 km of OpenStreetMap arterial highways**. It computes an explainable **Charging Need Score** and solves the **Maximum Coverage Location Problem (MCLP)** via an iterative **Greedy Submodular Marginal Coverage Optimization Engine**.
 
+![VoltPune 3D Spatial Intelligence Command Platform](./screenshots/dashboard_full.png)
+
 ---
 
 ## 🏛️ System Architecture & Data Pipeline

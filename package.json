@@ -18,5 +18,8 @@
     "data-visualization"
   ],
   "author": "Harsh Shah",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.64.0"
+  }
 }

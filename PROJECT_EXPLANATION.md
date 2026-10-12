@@ -49,7 +49,39 @@ This document provides a complete technical walkthrough of **VoltPune — Pune E
 
 ---
 
-## 2. Geospatial Optimization Models Used & Why
+## 2. Visual Platform Showcase (Playwright Automated Captures)
+
+Below are high-resolution automated screenshots captured by Playwright directly from the live WebGL production environment.
+
+### 2.1 Complete 3D Spatial Command Platform
+![Full Dashboard View](./screenshots/dashboard_full.png)
+*Fig. 1. Master 3D spatial viewport showing 1,354 BEE stations (cyan), 10 recommended hubs (electric green), and 532.6 km of OpenStreetMap arterial networks with real-time KPI metrics.*
+
+### 2.2 Landing Hero View with CyberGrid Shader
+![Landing Hero View](./docs/screenshot_01_landing_hero.png)
+*Fig. 2. Entrance hero screen featuring custom WebGL CyberGridShader, statutory data indicators, and rapid one-click solver initiation.*
+
+### 2.3 3D Spatial Network & Ward Intelligence
+![3D Spatial Overview](./docs/screenshot_02_3d_spatial_overview.png)
+*Fig. 3. 3D perspective viewport pitched at 52° and bearing -22° showing arterial highway buffers and coverage isochrones.*
+
+### 2.4 Dynamic Submodular Optimizer Panel
+![Dynamic Optimizer Panel](./docs/screenshot_03_dynamic_optimizer.png)
+*Fig. 4. Real-time criteria weight sliders, candidate elimination funnel (100 → 72 → 43 → 21 → 10), and spatial anti-cannibalization controls.*
+
+### 2.5 Transit Corridor Journey Simulator with Low-Battery Pitstop
+![Transit Corridor Simulator](./docs/screenshot_05_corridor_simulation.png)
+*Fig. 5. Simulated EV transit corridor journey along arterial highway routes featuring low battery start (14% SoC), intermediate 60kW DC fast-charge pitstop (88% SoC), and final destination cruise.*
+
+### 2.6 Algorithmic Methodology & Data Provenance Modals
+| Methodology & Viva Defense Dossier | Statutory Data Sources & Provenance |
+| :---: | :---: |
+| ![Methodology Modal](./docs/screenshot_07_methodology_modal.png) | ![Provenance Modal](./docs/screenshot_08_provenance_modal.png) |
+| *Fig. 6a. Submodular proofs and mathematical equations.* | *Fig. 6b. Official BEE Gazette, VAHAN, PMC, and OSM data provenance.* |
+
+---
+
+## 3. Geospatial Optimization Models Used & Why
 
 ### Why Greedy Submodular MCLP?
 Urban facility location is inherently constrained by budgets and diminishing returns. Adding a new charger in an area that already has chargers provides near-zero marginal utility. 

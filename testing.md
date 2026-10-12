@@ -61,6 +61,18 @@ $$\text{Coverage}(\mathcal{S}_0 \cup \mathcal{S}_{\text{top-10}}) > \text{Covera
 3. **Corridor Journey Animation**: Clicks corridor C01 (Hinjewadi to Magarpatta), verifies the animated glowing path progression, low-battery start (14% SoC), pitstop refueling (88% SoC), and final arrival.
 4. **Natural Language Explanation Modal**: Clicks on candidate marker `OPT-01`, asserting that the 3-line analytical justification displays Hadapsar's deficit metrics correctly.
 
+### Automated Visual Artifacts (Screenshots Captured):
+All views and modal dialogues are automatically captured by Playwright (`take_screenshots.mjs`) and saved under `docs/` and `screenshots/`:
+- `screenshots/dashboard_full.png` — High-DPI full-page command center capture
+- `docs/screenshot_01_landing_hero.png` — Hero view with CyberGrid WebGL shader
+- `docs/screenshot_02_3d_spatial_overview.png` — 3D MapLibre view with 1,354 stations and 15 wards
+- `docs/screenshot_03_dynamic_optimizer.png` — Dynamic submodular optimization studio & funnel
+- `docs/screenshot_04_layers_and_wards.png` — Layer controls & ward choropleth view
+- `docs/screenshot_05_corridor_simulation.png` — Transit corridor simulation with pitstop recharge
+- `docs/screenshot_06_siting_rationale.png` — Selected station explainability card
+- `docs/screenshot_07_methodology_modal.png` — Algorithmic methodology and viva proof modal
+- `docs/screenshot_08_provenance_modal.png` — Statutory data provenance modal
+
 ---
 
 ## 5. Execution Commands
