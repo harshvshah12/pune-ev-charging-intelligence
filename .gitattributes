@@ -1,0 +1,23 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Explicitly declare text files
+*.md text
+*.json text
+*.geojson text
+*.csv text
+*.ts text
+*.tsx text
+*.py text
+*.css text
+*.html text
+*.svg text
+
+# Binary file declarations
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.pdf binary
+*.docx binary
+*.pbf binary

@@ -149,8 +149,52 @@ All 9 unit and integration tests verify coordinate validity, data deduplication,
 │   └── test_data_pipeline.py  # 9 Automated regression and verification tests
 ├── DATA_SOURCES.md           # Full data provenance and licensing dossier
 ├── METHODOLOGY.md            # Mathematical formulation and viva defense paper
+├── PRD.md                    # Product Requirements Document (30 sections)
+├── architecture.md           # High-throughput four-tier system architecture
+├── datasets.md               # Data dictionary, schemas, and coordinate verification
+├── math.md                   # Submodular proofs, Haversine, UTM 43N & Gini formulations
+├── ml_pipeline.md            # Optimization pipeline & KD-Tree spatial indexing
+├── experimental_results.md   # Macro coverage gains, distance reduction & sensitivity
+├── model_comparison.md      # Greedy Submodular vs ILP vs K-Means vs Demand Baselines
+├── api.md                    # REST API documentation & Swagger/ReDoc schemas
+├── PROJECT_EXPLANATION.md    # Comprehensive system & feature walkthrough
+├── EXPLAINER_FOR_TEACHER.md  # Viva defense cheat sheet, glossary & top exam Q&As
+├── IEEE_RESEARCH_PAPER.md    # Full publication-ready academic paper in IEEE format
+├── Pune_EV_Charging_Optimization_IEEE_Research_Paper.docx # Formal formatted research paper DOCX
+├── references.bib            # BibTeX academic citations (Nemhauser, BEE, MoRTH, OSM)
+├── research_notes.md         # Literature survey on facility location & spatial access
+├── limitations.md            # Grid transformer blindspots, land tenure & assumptions
+├── future_scope.md           # V2G, SCADA telemetry, ToD tariffs & queueing theory
+├── testing.md                # 3-tier testing report (pytest & Playwright)
+├── setup.md                  # Development, local setup, and production deployment guide
 └── README.md
 ```
+
+---
+
+## 📚 Complete Academic & Engineering Documentation Suite
+
+| Document | Primary Audience | Description & Key Topics Covered |
+| :--- | :--- | :--- |
+| **[IEEE_RESEARCH_PAPER.md](file:///X:/EV%20Manager/IEEE_RESEARCH_PAPER.md)** | Reviewers & Researchers | Full publication-grade IEEE journal paper with formal proofs, tables, and citations. |
+| **[Pune_EV_Charging_Optimization_IEEE_Research_Paper.docx](file:///X:/EV%20Manager/Pune_EV_Charging_Optimization_IEEE_Research_Paper.docx)** | Evaluators & Printers | Pre-formatted Microsoft Word (.docx) publication document ready for submission. |
+| **[PRD.md](file:///X:/EV%20Manager/PRD.md)** | Product & Engineering | Comprehensive Product Requirements Document, scope, personas, SLAs, and functional specs. |
+| **[architecture.md](file:///X:/EV%20Manager/architecture.md)** | System Architects | Decoupled four-tier system architecture, data flow, FastAPI microservices, and 3D WebGL engine. |
+| **[datasets.md](file:///X:/EV%20Manager/datasets.md)** | Data Engineers | Exhaustive data dictionary, provenance URLs, coordinate verification, and cleaning rules. |
+| **[math.md](file:///X:/EV%20Manager/math.md)** | Mathematicians & Viva | Geodesics, Multi-Criteria Need Scoring, Submodular MCLP proofs, and Gini spatial equity math. |
+| **[methodology.md](file:///X:/EV%20Manager/methodology.md)** | Academic Examiners | Formal 4-phase research methodology, candidate funnel logic, and sensitivity auditing. |
+| **[ml_pipeline.md](file:///X:/EV%20Manager/ml_pipeline.md)** | Machine Learning Eng. | Data engineering pipeline, KD-Tree spatial indexing, and submodular solver execution. |
+| **[experimental_results.md](file:///X:/EV%20Manager/experimental_results.md)** | Evaluators | Quantitative coverage metrics (+6.5% for 10 hubs), distance reduction (-10.0%), and Gini index. |
+| **[model_comparison.md](file:///X:/EV%20Manager/model_comparison.md)** | Benchmark Auditors | Greedy Submodular vs Exact ILP vs K-Means Clustering vs Pure Demand Ranking. |
+| **[api.md](file:///X:/EV%20Manager/api.md)** | API Integrators | Complete REST API specification with request/response JSON payloads for all endpoints. |
+| **[PROJECT_EXPLANATION.md](file:///X:/EV%20Manager/PROJECT_EXPLANATION.md)** | Viva & Portfolio Viewers | Comprehensive feature-by-feature explanation, 3D shaders, and corridor simulation mechanics. |
+| **[EXPLAINER_FOR_TEACHER.md](file:///X:/EV%20Manager/EXPLAINER_FOR_TEACHER.md)** | College Evaluators | Academic viva cheat sheet, glossary, and top 6 examiner questions with winning answers. |
+| **[references.bib](file:///X:/EV%20Manager/references.bib)** | Academics | BibTeX bibliography file containing 15 formal citations for literature review. |
+| **[research_notes.md](file:///X:/EV%20Manager/research_notes.md)** | Researchers | In-depth literature review, facility location theory (Hakimi, Church, Nemhauser), and hypotheses. |
+| **[limitations.md](file:///X:/EV%20Manager/limitations.md)** | Policy Auditors | Grid transformer headroom constraints, land tenure, and vehicle class assumptions. |
+| **[future_scope.md](file:///X:/EV%20Manager/future_scope.md)** | Future Roadmap | SCADA telemetry integration, V2G peak shaving, dynamic ToD tariffs, and queueing models. |
+| **[testing.md](file:///X:/EV%20Manager/testing.md)** | QA Engineers | 3-tier testing architecture, pytest verification logs, and Playwright browser tests. |
+| **[setup.md](file:///X:/EV%20Manager/setup.md)** | Developers | Local development environment setup, dependencies, and Vercel edge deployment guide. |
 
 ---
 
