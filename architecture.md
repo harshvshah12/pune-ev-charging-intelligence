@@ -37,6 +37,7 @@ The **VoltPune** platform separates geospatial data engineering and submodular o
 |  • POST /api/optimize     -> Dynamic Submodular Greedy Siting with custom weight vector  |
 |  • GET  /api/time-series  -> VAHAN historical EV adoption curves (2020 - 2026)          |
 |  • GET  /api/corridors    -> 8 arterial transit simulation paths with battery metrics   |
+|  • GET  /api/visualizations -> Matplotlib & Seaborn analytical figures & manifest       |
 +--------------------------------------------┬--------------------------------------------+
                                              | In-Memory Cache / Serialized GeoJSON
                                              v

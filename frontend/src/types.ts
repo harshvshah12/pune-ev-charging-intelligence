@@ -160,3 +160,24 @@ export interface MapLayerState {
   simulationRoute: boolean;
   building3D: boolean;
 }
+
+export interface VisualizationItem {
+  id: string;
+  title: string;
+  subtitle: string;
+  filename: string;
+  category: string;
+  icon?: string;
+  accent_color: string;
+  key_takeaway: string;
+  data_meaning: string[];
+  metrics_highlight: Record<string, string>;
+}
+
+export interface VisualizationsManifest {
+  generated_timestamp: string;
+  engine: string;
+  theme: string;
+  total_charts: number;
+  visualizations: VisualizationItem[];
+}

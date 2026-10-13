@@ -1,4 +1,4 @@
-import { Station, WardCollection, Candidate, Recommendation, FunnelStep, TimeSeriesYear, SimulationCorridor, OverviewMetrics } from '../types';
+import { Station, WardCollection, Candidate, Recommendation, FunnelStep, TimeSeriesYear, SimulationCorridor, OverviewMetrics, VisualizationsManifest } from '../types';
 
 const API_BASE = (import.meta as any).env?.VITE_API_BASE || '/api';
 
@@ -172,4 +172,15 @@ export async function executeOptimization(params: {
     optimized_coverage_pct: currentCoverage,
     net_coverage_gain_pct: Math.round((currentCoverage - baseline) * 10) / 10
   };
+}
+
+export async function fetchVisualizations(): Promise<VisualizationsManifest> {
+  try {
+    const res = await fetch(`${API_BASE}/visualizations`);
+    if (isJsonResponse(res)) return await res.json();
+  } catch (e) {
+    // fallback to static manifest
+  }
+  const res = await fetch('/visualizations/visualizations_manifest.json');
+  return await res.json();
 }

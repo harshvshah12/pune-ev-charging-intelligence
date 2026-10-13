@@ -417,3 +417,11 @@ def get_sources():
             }
         ]
     }
+
+@app.get("/api/visualizations")
+def get_visualizations():
+    viz_manifest_path = os.path.join(BASE_DIR, "data", "visualizations", "visualizations_manifest.json")
+    if os.path.exists(viz_manifest_path):
+        with open(viz_manifest_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"visualizations": []}

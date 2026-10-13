@@ -1,9 +1,10 @@
 import React from 'react';
-import { Zap, ShieldCheck, Database, Sliders, Activity, Terminal, Radio } from 'lucide-react';
+import { Zap, ShieldCheck, Database, Sliders, Activity, Terminal, Radio, BarChart3 } from 'lucide-react';
 
 interface HeaderProps {
   onOpenMethodology: () => void;
   onOpenProvenance: () => void;
+  onOpenVisualizations: () => void;
   onTriggerFlagshipBuild: () => void;
   isOptimizing: boolean;
   activeTargetCount?: number;
@@ -12,6 +13,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   onOpenMethodology,
   onOpenProvenance,
+  onOpenVisualizations,
   onTriggerFlagshipBuild,
   isOptimizing,
   activeTargetCount = 10
@@ -78,6 +80,19 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Database className="w-3.5 h-3.5 text-amber-400" />
           <span>Data Sources</span>
+        </button>
+
+        {/* Custom Data Visualizations Panel Button */}
+        <button
+          onClick={onOpenVisualizations}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-violet-500/15 hover:bg-violet-500/25 text-violet-200 hover:text-white text-xs font-mono-tech border border-violet-500/35 hover:border-violet-400/60 transition-all cursor-pointer shadow-sm shadow-violet-500/15"
+          title="Inspect Custom Matplotlib & Seaborn Empirical Data Visualizations"
+        >
+          <BarChart3 className="w-3.5 h-3.5 text-violet-400" />
+          <span>Visualizations</span>
+          <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-violet-400/20 text-violet-300 font-bold ml-0.5">
+            6
+          </span>
         </button>
 
         {/* GitHub Shortcut */}

@@ -1,0 +1,134 @@
+{
+  "generated_timestamp": "2026-10-13T14:15:00+05:30",
+  "engine": "Matplotlib 3.10.0 + Seaborn 0.13.2 High-DPI Engine",
+  "theme": "VoltPune Aerospace Dark (#070b12)",
+  "total_charts": 6,
+  "visualizations": [
+    {
+      "id": "ward-deficit",
+      "title": "Ward-Level Equity & Charging Deficit",
+      "subtitle": "Spatial disparity across 15 Pune Municipal Corporation administrative units",
+      "filename": "ward_charging_deficit.png",
+      "category": "Spatial Equity",
+      "icon": "MapPin",
+      "accent_color": "#f43f5e",
+      "key_takeaway": "Hadapsar and Bhavani Peth have up to 483 EVs per charging point, creating acute geographic charging deserts.",
+      "data_meaning": [
+        "Hadapsar (Ward 13) has 7,612 registered EVs but only 20 public stations (need score 85.5/100).",
+        "Bhavani Peth (Ward 12) exhibits a critical ratio of 483.3 EVs per charger, the highest in the entire district.",
+        "Historic core wards (Kasba Peth) have low geographic sprawl and <=100 EVs per station, demonstrating severe municipal misallocation.",
+        "Siting must strictly prioritize the eastern IT/industrial arc (Hadapsar, Kharadi, Wagholi) rather than central commercial corridors."
+      ],
+      "metrics_highlight": {
+        "Worst Ratio": "483.3 EVs/charger (Bhavani Peth)",
+        "Best Ratio": "80.6 EVs/charger (Dhankawadi)",
+        "Critical Desert Wards": "2 (Hadapsar & Nagar Road)"
+      }
+    },
+    {
+      "id": "power-distribution",
+      "title": "Power Capacity & Charger Speed Mismatch",
+      "subtitle": "Analysis of 1,354 public charging points by kilowatt output and connector architecture",
+      "filename": "power_and_charger_distribution.png",
+      "category": "Grid & Hardware",
+      "icon": "Zap",
+      "accent_color": "#06b6d4",
+      "key_takeaway": "86.9% of Pune's chargers are slow 3.3kW LEV points. Only 13.1% are fast DC chargers capable of servicing 4W passenger cars and commercial fleets.",
+      "data_meaning": [
+        "Headline figures claiming 1,354 stations obscure the fact that 1,177 points are slow 3.3kW AC or light EV plugs.",
+        "A 3.3kW charger requires 4 to 8 hours for a full charge, making daytime replenishment impractical for ride-share fleets and commuters.",
+        "Only 177 verified charging stations offer >=7.4kW or DC fast charging (CCS-2 / CHAdeMO / Bharat DC-001).",
+        "This creates severe queue anxiety among EV cab and delivery drivers, proving the urgent need for high-speed multi-gun DC hubs."
+      ],
+      "metrics_highlight": {
+        "Total Points": "1,354",
+        "Slow / LEV (<=3.3kW)": "86.9% (1,177 pts)",
+        "Verified Fast (>=7.4kW)": "13.1% (177 pts)"
+      }
+    },
+    {
+      "id": "cpo-market-share",
+      "title": "CPO Market Share & Private Dominance",
+      "subtitle": "Operator concentration and public vs private infrastructure ownership",
+      "filename": "cpo_market_share.png",
+      "category": "Market Structure",
+      "icon": "Building2",
+      "accent_color": "#10b981",
+      "key_takeaway": "Private operators account for 88.6% of charging points, with Ather dominating 2W AC and Tata Power dominating 4W DC.",
+      "data_meaning": [
+        "Ather Energy maintains the largest footprint due to early rollout of proprietary LEV points in retail and restaurant locations.",
+        "Tata Power and ChargeZone provide the backbone of high-capacity highway and commercial DC fast charging.",
+        "Municipal and government utility deployments (MSEDCL / PMC) represent less than 12% of operational sites.",
+        "Lack of interoperability between proprietary CPO apps and billing networks creates severe user friction that municipal open-access hubs can resolve."
+      ],
+      "metrics_highlight": {
+        "Private Sector Share": "88.6%",
+        "Top 2W Operator": "Ather Energy",
+        "Top 4W Fast Operator": "Tata Power"
+      }
+    },
+    {
+      "id": "submodular-gain",
+      "title": "Greedy Submodular Coverage Convergence",
+      "subtitle": "Mathematical proof of diminishing marginal returns across 20 siting iterations",
+      "filename": "submodular_coverage_curve.png",
+      "category": "Mathematical Model",
+      "icon": "TrendingUp",
+      "accent_color": "#f59e0b",
+      "key_takeaway": "Siting 10 stations achieves 90.0% citywide coverage (+6.5% gain). Stations 11-20 add only 1.7% combined, proving 10 is the optimal Pareto sweet spot.",
+      "data_meaning": [
+        "Demonstrates the submodular property f(S U {x}) - f(S) >= f(T U {x}) - f(T) for S subset T, yielding an optimal greedy (1 - 1/e) guarantee.",
+        "The first 5 sited stations generate steep coverage improvements (+4.5%) by plugging major arterial deficits.",
+        "At k=10, the curve reaches an elbow point, reducing average distance citywide to 0.99 km.",
+        "Beyond k=10, marginal coverage gain drops below 0.3% per station, demonstrating that municipal CAPEX is best allocated to 10 strategic multi-gun hubs."
+      ],
+      "metrics_highlight": {
+        "Baseline Coverage": "83.5%",
+        "10-Hub Coverage": "90.0% (+6.5%)",
+        "20-Hub Coverage": "91.7% (+1.7% marginal)"
+      }
+    },
+    {
+      "id": "siting-funnel",
+      "title": "Siting Decision Funnel & Criteria Correlation",
+      "subtitle": "Candidate reduction logic and trade-offs between arterial roads and deficit gaps",
+      "filename": "siting_funnel_correlation.png",
+      "category": "Algorithmic Pipeline",
+      "icon": "Filter",
+      "accent_color": "#a855f7",
+      "key_takeaway": "Filters 100 candidate intersections through 5 rigorous constraints to isolate the 10 highest-impact hubs.",
+      "data_meaning": [
+        "Stage 1 generates 100 candidate nodes across Pune's road intersections, commercial centers, and transit nodes.",
+        "Stage 2 filters to 72 nodes within 200m of primary arterial roads with robust power feeder availability.",
+        "Stage 3 isolates 43 sites situated strictly within identified charging deserts (nearest charger >= 1.05 km).",
+        "Stage 4 ranks the top 21 candidates by composite need score, from which greedy submodular selection picks the final 10 with 1.15km spatial separation."
+      ],
+      "metrics_highlight": {
+        "Initial Candidates": "100",
+        "Arterially Viable": "72 (72%)",
+        "Final Sited Hubs": "10 (10%)"
+      }
+    },
+    {
+      "id": "temporal-growth",
+      "title": "EV Fleet Surge vs Infrastructure Deficit (2020-2026)",
+      "subtitle": "Longitudinal comparison of cumulative vehicle registrations and charging point growth",
+      "filename": "temporal_growth_and_deficit.png",
+      "category": "Macro Trends",
+      "icon": "BarChart3",
+      "accent_color": "#ec4899",
+      "key_takeaway": "EV fleet size in Pune exploded 42-fold from 2020 to 2026, driving the EV-to-charger ratio from 347:1 down to ~195:1, still far above the 50:1 target.",
+      "data_meaning": [
+        "Annual new EV registrations surged from 4,820 in 2020 to over 85,000 by 2025/2026, driven by Maharashtra's progressive EV subsidy policy.",
+        "Electric 2-wheelers represent >85% of registrations, but fast-charging demand is propelled heavily by commercial 4W cabs and delivery fleets.",
+        "While total public chargers grew from 18 to 1,354, the ratio remains at ~195 EVs per station\u2014nearly 4x higher than NITI Aayog's recommended 50:1 limit.",
+        "Without proactive 60-120kW fast-charging corridor investments, grid bottlenecks will severely constrain Pune's net-zero mobility targets."
+      ],
+      "metrics_highlight": {
+        "2020 Cumulative EVs": "6,250",
+        "2026 Cumulative EVs": "264,166 (42x growth)",
+        "Current Deficit Ratio": "195:1 (Target: <50:1)"
+      }
+    }
+  ]
+}

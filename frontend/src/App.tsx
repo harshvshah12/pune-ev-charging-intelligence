@@ -10,6 +10,7 @@ import { SitingRationalePanel } from './components/SitingRationalePanel';
 import { StationDetailDrawer } from './components/StationDetailDrawer';
 import { MethodologyModal } from './components/MethodologyModal';
 import { ProvenanceModal } from './components/ProvenanceModal';
+import { VisualizationsModal } from './components/VisualizationsModal';
 import { LandingHero } from './components/LandingHero';
 import {
   fetchOverview,
@@ -18,6 +19,7 @@ import {
   fetchRoads,
   fetchOptimizationData,
   fetchTimeSeries,
+  fetchVisualizations,
   executeOptimization
 } from './services/api';
 import {
@@ -29,7 +31,8 @@ import {
   MapLayerState,
   TimeSeriesYear,
   SimulationCorridor,
-  CorridorWaypoint
+  CorridorWaypoint,
+  VisualizationsManifest
 } from './types';
 import confetti from 'canvas-confetti';
 import { CheckCircle2, Award, Zap, Compass, RefreshCw, Sliders, Layers, ChevronDown } from 'lucide-react';
@@ -101,19 +104,22 @@ export function App() {
   // Modals
   const [showMethodologyModal, setShowMethodologyModal] = useState<boolean>(false);
   const [showProvenanceModal, setShowProvenanceModal] = useState<boolean>(false);
+  const [showVisualizationsModal, setShowVisualizationsModal] = useState<boolean>(false);
+  const [visualizationsManifest, setVisualizationsManifest] = useState<VisualizationsManifest | null>(null);
 
   // Load Initial Datasets
   useEffect(() => {
     async function loadData() {
       try {
         setLoading(true);
-        const [overviewData, stData, wardsData, roadsData, optData, tsData] = await Promise.all([
+        const [overviewData, stData, wardsData, roadsData, optData, tsData, vizData] = await Promise.all([
           fetchOverview(),
           fetchStations(),
           fetchWards(),
           fetchRoads(),
           fetchOptimizationData(),
-          fetchTimeSeries()
+          fetchTimeSeries(),
+          fetchVisualizations().catch(() => null)
         ]);
 
         setMetrics(overviewData.metrics);
@@ -124,6 +130,9 @@ export function App() {
         setRecommendations(optData.recommendations);
         setTimeline(tsData.timeline);
         setCorridor(tsData.simulation_corridor);
+        if (vizData) {
+          setVisualizationsManifest(vizData);
+        }
         if (tsData.simulation_corridors && tsData.simulation_corridors.length > 0) {
           setCorridors(tsData.simulation_corridors);
         } else if (tsData.simulation_corridor) {
@@ -253,6 +262,7 @@ export function App() {
       <Header
         onOpenMethodology={() => setShowMethodologyModal(true)}
         onOpenProvenance={() => setShowProvenanceModal(true)}
+        onOpenVisualizations={() => setShowVisualizationsModal(true)}
         onTriggerFlagshipBuild={handleTriggerFlagshipBuild}
         isOptimizing={isOptimizing}
         activeTargetCount={targetStations}
@@ -451,12 +461,23 @@ export function App() {
         onClose={() => setShowProvenanceModal(false)}
       />
 
+      {/* Custom Data Visualizations Modal */}
+      <VisualizationsModal
+        isOpen={showVisualizationsModal}
+        onClose={() => setShowVisualizationsModal(false)}
+        manifest={visualizationsManifest}
+      />
+
       {/* Minimal Aerospace Footer */}
       <footer className="border-t border-white/[0.08] px-6 py-4 mt-8 text-xs text-slate-500 flex flex-wrap items-center justify-between gap-4 font-mono-tech">
         <div>
           <span>VOLTPUNE · T.Y. B.Tech CSE (AI & DS) Mini-Project · Autonomous Spatial Intelligence</span>
         </div>
         <div className="flex items-center gap-4">
+          <button onClick={() => setShowVisualizationsModal(true)} className="text-violet-400 hover:text-violet-300 font-semibold cursor-pointer">
+            Visual Analytics (6 Figures)
+          </button>
+          <span>·</span>
           <button onClick={() => setShowProvenanceModal(true)} className="hover:text-slate-300 cursor-pointer">
             DATA_SOURCES.md
           </button>
